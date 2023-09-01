@@ -98,14 +98,14 @@
                             </span>
                             <br>';
                     }
-                    echo "
-                        <script>setInterval(function() {
-                            let x = document.getElementById('uptime" . $i . "').innerHTML;
-                            x = parseInt(x) + 1;
-                            document.getElementById('uptime" . $i . "').innerHTML = x;
-                        }, 1000)
-                        </script>
-                        ";
+                    // echo "
+                    //     <script>setInterval(function() {
+                    //         let x = document.getElementById('uptime" . $i . "').innerHTML;
+                    //         x = parseInt(x) + 1;
+                    //         document.getElementById('uptime" . $i . "').innerHTML = x;
+                    //     }, 1000)
+                    //     </script>
+                    //     ";
                     echo '
                     <br><b>Commands:</b>
                     <button onclick="shutdown_computer(\'' . $info[$i]["cn"][0] . '\', \'false\')">Shutdown</button>
