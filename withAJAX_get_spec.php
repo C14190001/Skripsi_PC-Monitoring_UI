@@ -82,6 +82,7 @@
     <span>
         <?php
         $specs = ["name", "os", "cpu", "gpu", "ram", "hdd", "ipMac", "apps", "uptime", "cpuUsage", "ramUsage", "hddUsage", "connection"];
+        $specs2 = ["PC name", "OS name", "CPU name", "GPU name", "RAM capacity", "HDD capacity", "IP & MAC", "Installed apps", "Uptime (Seconds)", "CPU usage", "RAM free space", "HDD free space", "Connection status"];
         $ds = ldap_connect("LDAP://192.168.56.103"); //ADSI
         if ($ds) {
             $r = ldap_bind($ds, "Administrator@myserver.com", "abcd1234."); //Administrator (UNSAFE LOL)
@@ -92,7 +93,7 @@
                     echo "<b>Client #" . $i . " (" . $info[$i]["cn"][0] . "):</b><br><br>";
                     for ($j = 0; $j < count($specs); $j++) {
                         echo '<button onclick="get_computer_info(\'' . $info[$i]["cn"][0] . '\', \'' . $specs[$j] . '\', \'' . $specs[$j] . '' . $i . '\')">Refresh</button>
-                            <span>' . $specs[$j] . ':
+                            <span>' . $specs2[$j] . ':
                             <span id="' . $specs[$j] . $i . '"></span>
                             <script>get_computer_info("' . $info[$i]["cn"][0] . '", "' . $specs[$j] . '", "' . $specs[$j] . '' . $i . '")</script>
                             </span>
