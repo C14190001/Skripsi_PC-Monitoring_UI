@@ -26,22 +26,87 @@ try {
     <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
     <!----------------->
     <script>
-        function refresh_page() {
-            window.location.href = 'main.php';
-        }
-
-        function scan_devices_ad($button) {
-            document.getElementById($button).innerHTML = "Scanning...";
+        function get_client_detail($id) {
+            document.getElementById('client_detail').innerHTML = "Loading...";
             $.ajax({
                 type: "POST",
-                url: "ajax/scan_devices_ad.php",
-                data: ({}),
+                url: "ajax/get_client_detail.php",
+                data: ({
+                    id: $id,
+                }),
             }).done(function(msg) {
-                alert(msg);
-                document.getElementById($output).innerHTML = "Scan";
+                document.getElementById('client_detail').innerHTML = msg;
             });
         }
 
+        function get_computer_info($client, $info, $output) {
+            document.getElementById($output).innerHTML = "...";
+            $.ajax({
+                type: "POST",
+                url: "computer_info/get_computer_" + $info + ".php",
+                data: ({
+                    target: $client,
+                }),
+            }).done(function(msg) {
+                document.getElementById($output).innerHTML = msg;
+            });
+        }
+
+        function shutdown_computer($client, $restart) {
+            $.ajax({
+                type: "POST",
+                url: "computer_function/shutdown.php",
+                data: ({
+                    target: $client,
+                    restart: $restart,
+                }),
+            }).done(function(msg) {
+                alert(msg);
+            });
+        }
+
+        function ping_computer($client, $output) {
+            document.getElementById($output).innerHTML = "Pinging...";
+            $.ajax({
+                type: "POST",
+                url: "computer_function/ping.php",
+                data: ({
+                    target: $client,
+                }),
+            }).done(function(msg) {
+                alert(msg);
+                document.getElementById($output).innerHTML = "Ping";
+            });
+        }
+
+        function get_open_ports($client, $output) {
+            document.getElementById($output).innerHTML = "Getting open ports...";
+            $.ajax({
+                type: "POST",
+                url: "computer_function/open_ports.php",
+                data: ({
+                    target: $client,
+                }),
+            }).done(function(msg) {
+                alert(msg);
+                document.getElementById($output).innerHTML = "Open ports";
+            });
+        }
+
+        function trace_route($client, $dest, $output) {
+            document.getElementById($output).innerHTML = "Tracing route...";
+            $.ajax({
+                type: "POST",
+                url: "computer_function/trace_route.php",
+                data: ({
+                    target: $client,
+                    dest: document.getElementById($dest).value,
+                }),
+            }).done(function(msg) {
+                alert(msg);
+                document.getElementById($output).innerHTML = "Trace route";
+            });
+        }
         //[Function]
         //scan_devices_ip: 
         //Dialog / modal buat input value range IP, Scan, 
@@ -66,26 +131,43 @@ try {
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="topnav_menu">
-            <div class="navbar-nav">
+            <div class="navbar-nav mr-auto">
                 <a class="nav-item nav-link" href="#" data-toggle="modal" data-target="#sd_modal" data-backdrop="static" data-keyboard="false">Scan Devices</a>
+                <a class="nav-item nav-link" href="#">Download .CSV</a>
+            </div>
+            <div class="navbar-nav ml-auto">
+                <button class="btn btn-primary">Logout</button>
             </div>
         </div>
 
     </nav>
-    <div class="container-fluid h-100">
-        <div class="row h-100">
-            <div class="col-2">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-3" style="height: 90vh; overflow-y: scroll;">
                 <h4>Clients</h4>
                 <?php
-                //Select
                 $stmt = $pdo->prepare("SELECT * FROM `clients`");
                 $stmt->execute();
                 foreach ($stmt as $row) {
-                    echo '<a href=\'' . '#' . '\'>' . $row['client_id'] . ': ' . $row['name'] . '</a><br><br>';
+                    echo '<button type="button" class="btn btn-light w-100 text-left" onclick=\'get_client_detail(' .  $row['client_id'] . ')\'>' . $row['name'] . '<span class=\'float-right\' style=\'color:red\'>(Connection status script)</script></span>';
+                    $stmt2 = $pdo->prepare("SELECT ip from clients_network WHERE client_id = " . $row['client_id']);
+                    $stmt2->execute();
+                    $c = 0;
+                    echo "<ul>";
+                    foreach ($stmt2 as $row2) {
+                        echo '<li>' .$row2['ip'];
+                        $c++;
+                        if ($c > 1) {
+                            echo '<li>...</li>';
+                            break;
+                        }
+                    }
+                    echo "</ul></button><br><br>";
                 }
                 ?>
             </div>
-            <div class="col-10" style="text-align: justify;">
+            <div class="col-9" style="text-align: justify; height: 90vh; overflow-y: scroll;">
+
                 <div class="modal fade" id="sd_modal">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
@@ -105,25 +187,8 @@ try {
                         </div>
                     </div>
                 </div>
-                <p>Bootstrap Test:</p>
-                <div class="alert alert-success alert-dismissible fade show">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong>Success!</strong> Bootstrap v4.6 testing.
-                </div>
 
-                <p>SQL Test:</p>
-                <?php
-                //Select
-                $stmt = $pdo->prepare("SELECT * FROM `clients`");
-                $stmt->execute();
-                foreach ($stmt as $row) {
-                    echo 'Row ' . $row['client_id'] . ': ' . $row['name'] . ', ' . $row['os'] . ', ' . $row['cpu'] . ', ' . $row['gpu'] . ', ' . $row['ram'] . ', ' . $row['mem'];
-                }
-
-                //Update / Insert
-                //$stmt = $pdo->prepare("UPDATE `clients` SET `name` = ? WHERE `client_id` = ?");
-                //$stmt->execute(['wtf_pc3', 1]);
-                ?>
+                <div id='client_detail'></div>
             </div>
         </div>
     </div>

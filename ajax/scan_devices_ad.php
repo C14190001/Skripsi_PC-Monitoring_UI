@@ -1,5 +1,5 @@
 <?php
-require 'config.php';
+require '..\config.php';
 $ds = ldap_connect($ldap_host);
 if ($ds) {
     $r = ldap_bind($ds, $ldap_user, $ldap_pass);
