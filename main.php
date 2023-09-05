@@ -60,25 +60,73 @@ try {
 </head>
 
 <body>
-    <p>Bootstrap Test:</p>
-    <div class="alert alert-success alert-dismissible fade show">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <strong>Success!</strong> Bootstrap v4.6 testing.
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="main.php">Monitoring UI</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topnav_menu" aria-controls="topnav_menu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="topnav_menu">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" href="#" data-toggle="modal" data-target="#sd_modal" data-backdrop="static" data-keyboard="false">Scan Devices</a>
+            </div>
+        </div>
+
+    </nav>
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <div class="col-2">
+                <h4>Clients</h4>
+                <?php
+                //Select
+                $stmt = $pdo->prepare("SELECT * FROM `clients`");
+                $stmt->execute();
+                foreach ($stmt as $row) {
+                    echo '<a href=\'' . '#' . '\'>' . $row['client_id'] . ': ' . $row['name'] . '</a><br><br>';
+                }
+                ?>
+            </div>
+            <div class="col-10" style="text-align: justify;">
+                <div class="modal fade" id="sd_modal">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Scan Devices</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p>Options: AD / IP</p>
+                                <p>IP Range</p>
+                                <p>Results:</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary">Scan</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <p>Bootstrap Test:</p>
+                <div class="alert alert-success alert-dismissible fade show">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Success!</strong> Bootstrap v4.6 testing.
+                </div>
+
+                <p>SQL Test:</p>
+                <?php
+                //Select
+                $stmt = $pdo->prepare("SELECT * FROM `clients`");
+                $stmt->execute();
+                foreach ($stmt as $row) {
+                    echo 'Row ' . $row['client_id'] . ': ' . $row['name'] . ', ' . $row['os'] . ', ' . $row['cpu'] . ', ' . $row['gpu'] . ', ' . $row['ram'] . ', ' . $row['mem'];
+                }
+
+                //Update / Insert
+                //$stmt = $pdo->prepare("UPDATE `clients` SET `name` = ? WHERE `client_id` = ?");
+                //$stmt->execute(['wtf_pc3', 1]);
+                ?>
+            </div>
+        </div>
     </div>
-
-    <p>SQL Test:</p>
-    <?php
-    //Select
-    $stmt = $pdo->prepare("SELECT * FROM `clients`");
-    $stmt->execute();
-    foreach ($stmt as $row) {
-        echo 'Row ' . $row['client_id'] . ': ' . $row['name'] . ', ' . $row['os'] . ', ' . $row['cpu'] . ', ' . $row['gpu'] . ', ' . $row['ram'] . ', ' . $row['mem'];
-    }
-
-    //Update / Insert
-    //$stmt = $pdo->prepare("UPDATE `clients` SET `name` = ? WHERE `client_id` = ?");
-    //$stmt->execute(['wtf_pc3', 1]);
-    ?>
 </body>
 
 </html>
