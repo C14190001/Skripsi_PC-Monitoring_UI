@@ -16,7 +16,7 @@ sort($open_ports);
 
 //print_r($open_ports);
 
-echo $target . "'s open ports:\n";
+//echo $target . "'s open ports:\n";
 for ($i = 0; $i < count($open_ports); $i++) {
     echo $open_ports[$i];
     if($i < count($open_ports) - 1){

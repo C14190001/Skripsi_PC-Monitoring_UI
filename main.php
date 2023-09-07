@@ -61,7 +61,13 @@ try {
                     restart: $restart,
                 }),
             }).done(function(msg) {
-                alert(msg);
+                if ($restart == "true") {
+                    $a = $client + "'s restart results";
+                } else {
+                    $a = $client + "'s shutdown results";
+                }
+                show_info_modal($a, msg);
+                //alert(msg);
             });
         }
 
@@ -74,7 +80,9 @@ try {
                     target: $client,
                 }),
             }).done(function(msg) {
-                alert(msg);
+                $a = $client + "'s ping results";
+                show_info_modal($a, msg);
+                //alert(msg);
                 document.getElementById($output).innerHTML = "Ping";
             });
         }
@@ -88,7 +96,9 @@ try {
                     target: $client,
                 }),
             }).done(function(msg) {
-                alert(msg);
+                $a = $client + "'s open ports";
+                show_info_modal($a, msg);
+                //alert(msg);
                 document.getElementById($output).innerHTML = "Open ports";
             });
         }
@@ -103,24 +113,50 @@ try {
                     dest: document.getElementById($dest).value,
                 }),
             }).done(function(msg) {
-                alert(msg);
+                if (document.getElementById($dest).value == "") {
+                    $b = "NULL";
+                } else {
+                    $b = document.getElementById($dest).value;
+                }
+                $a = $client + "'s trace route to " + $b;
+                show_info_modal($a, msg);
+                //alert(msg);
                 document.getElementById($output).innerHTML = "Trace route";
             });
         }
-        //[Function]
-        //scan_devices_ip: 
-        //Dialog / modal buat input value range IP, Scan, 
-        //bandingkan dengan DB Client, Tambah Devices, get details.
+
+        function refresh_clients_list() {
+            //Refresh daftar client dengan F5 (sementara)
+            window.location.reload();
+        }
+
+        function check_computer_connection($client, $client_id, $output) {
+            document.getElementById($output).innerHTML = "";
+            $.ajax({
+                type: "POST",
+                url: "computer_info/get_computer_connection.php",
+                data: ({
+                    target: $client,
+                    id: $client_id,
+                }),
+            }).done(function(msg) {
+                document.getElementById($output).innerHTML = msg;
+            });
+        }
+
+        function show_info_modal($title, $body) {
+            document.getElementById("info_modal_title").innerHTML = $title;
+            document.getElementById("info_modal_body").innerHTML = $body;
+            $('#info_modal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+            $('#info_modal').modal('show');
+        }
 
         //[Function]
-        //get_client_info_all(client,spanId) = edit <span>
-        //get_client_info(client,info,spanId) = edit <span>
-        //client_function(client,func) = Alert msg
-
-        //[Function]
-        //download_csv(jumlah_client): 
-        //pake loop 0 ke jumlah_client, ambil document.getElementById(spanId).innerHTML.
-        //masukkan ke array, buat csv.
+        //get_client_info_all
+        //download_csv()
     </script>
 </head>
 
@@ -136,7 +172,7 @@ try {
                 <a class="nav-item nav-link" href="#">Download .CSV</a>
             </div>
             <div class="navbar-nav ml-auto">
-                <button class="btn btn-primary">Logout</button>
+                <button class="btn btn-primary" onclick="show_info_modal('Info','LogOut Success.')">Logout</button>
             </div>
         </div>
 
@@ -144,30 +180,49 @@ try {
     <div class="container-fluid">
         <div class="row">
             <div class="col-3" style="height: 90vh; overflow-y: scroll;">
-                <h4>Clients</h4>
+                <div class="container">
+                    <div class="row mt-3">
+                        <h4 class="col-8">Clients</h4>
+                        <button class="btn btn-primary col" onclick="refresh_clients_list()" style="float: right;">Refresh All</button>
+                    </div>
+                </div>
+                <hr>
                 <?php
                 $stmt = $pdo->prepare("SELECT * FROM `clients`");
                 $stmt->execute();
+                $i = 0;
                 foreach ($stmt as $row) {
-                    echo '<button type="button" class="btn btn-light w-100 text-left" onclick=\'get_client_detail(' .  $row['client_id'] . ')\'>' . $row['name'] . '<span class=\'float-right\' style=\'color:red\'>(Connection status script)</script></span>';
+                    echo '<button type="button" class="btn btn-light w-100" onclick=\'get_client_detail(' .  $row['client_id'] . ')\'>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-1"><span id=\'conn_stat' . $i . '\'></span></div>
+                            <div class="col" style="text-align: left;"><b>' . $row['name'] . '</b></div>
+                        </div>
+                        <div class="row">
+                            <div class="col" style="vertical-align: top; text-align: left;">';
+
+                    //IP Address
+                    echo '<script>check_computer_connection(\'' . $row['name'] . '\',\'' . $row['client_id'] . '\',\'conn_stat' . $i . '\')</script>';
                     $stmt2 = $pdo->prepare("SELECT ip from clients_network WHERE client_id = " . $row['client_id']);
                     $stmt2->execute();
                     $c = 0;
-                    echo "<ul>";
                     foreach ($stmt2 as $row2) {
-                        echo '<li>' .$row2['ip'];
+                        echo $row2['ip'];
                         $c++;
+                        echo ', ';
                         if ($c > 1) {
-                            echo '<li>...</li>';
+                            echo '...';
                             break;
                         }
                     }
-                    echo "</ul></button><br><br>";
+
+                    echo "</div><div class=\"col-1\"></div></button><br><br>";
+                    $i++;
                 }
                 ?>
             </div>
             <div class="col-9" style="text-align: justify; height: 90vh; overflow-y: scroll;">
-
+                <!--Modal Scan Devices-->
                 <div class="modal fade" id="sd_modal">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
@@ -175,13 +230,28 @@ try {
                                 <h4 class="modal-title">Scan Devices</h4>
                             </div>
                             <div class="modal-body">
-                                <p>Options: AD / IP</p>
-                                <p>IP Range</p>
+                                <p>Options: AD </p>
                                 <p>Results:</p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-primary">Scan</button>
                                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!--Modal Info-->
+                <div class="modal fade" id="info_modal">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="info_modal_title"></h4>
+                            </div>
+                            <div class="modal-body" id="info_modal_body"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                             </div>
 
                         </div>

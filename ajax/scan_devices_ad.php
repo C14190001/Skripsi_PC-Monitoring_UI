@@ -8,9 +8,9 @@ if ($ds) {
         $info = ldap_get_entries($ds, $sr);
         for ($i = 0; $i < $info["count"]; $i++) {
             //Nama Client di AD: $info[$i]["cn"][0]
-            //Check jika di DB Clients sudah ada atau belum (melalui 'MAC Address (unique)' atau 'nama PC'?)
+            //Check jika di DB Clients sudah ada atau belum (melalui 'MAC Address (unique)')
             //Jika belum ada, tambahkan di DB
-
+            
             //Jika sudah scan / tambahkan, munculkan alert "Devices yang ditambahkan ...."
         }
     }

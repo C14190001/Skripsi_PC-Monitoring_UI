@@ -14,36 +14,58 @@ try {
 $id = $_POST['id'];
 $stmt = $pdo->prepare("SELECT * FROM `clients` WHERE `client_id` = " . $id);
 $stmt->execute();
-$i = 0;
+
 foreach ($stmt as $row) {
-    //1. Load data dari DB
+    //1. Load data dari DB [OK]
     //2. jika DB null, maka pake shell_exec() lalu simpan value nya ke DB
     //3. Echo (Tombol Refresh) (spesifikasi): (Value)
 
-    //Status
+    //Status (Selalu diupdate)
     echo '<h1>' . $row['name'] . '</h1>';
     $stmt2 = $pdo->prepare("SELECT * FROM `clients_status` WHERE `client_id` = " . $id);
     $stmt2->execute();
+    $is_null = true;
     foreach ($stmt2 as $row2) {
         echo 'Connection status: ' . $row2['connection_status'] . ". ";
         echo 'CPU Usage: ' . $row2['cpu_usage'] . '%. ';
         echo 'RAM Usage: ' . $row2['ram_usage'] . 'GB. ';
         echo 'Memory Usage: ' . $row2['mem_usage'] . 'GB.';
+        $is_null = false;
+    }
+
+    echo ">>[is_null: " . $is_null . "]<<"; //DEBUG
+    if($is_null){
+        //Get CPU usage
+        //Get RAM usage
+        //Get HDD usage
+        //INSERT status
     }
 
     //Commands
     echo '
     <br><br>
-    <button class="btn btn-primary" onclick="shutdown_computer(\'' . $row['name'] . '\', \'false\')">Shutdown</button>
-    <button class="btn btn-primary"onclick="shutdown_computer(\'' . $row['name'] . '\', \'true\')">Restart</button>
-    <button class="btn btn-primary"id="ping' . $i . '" onclick="ping_computer(\'' . $row['name'] . '\',\'ping' . $i . '\')">Ping</button>
-    <button class="btn btn-primary"id="open_port' . $i . '" onclick="get_open_ports(\'' . $row['name'] . '\',\'open_port' . $i . '\')">Open ports</button>
-    <input id="tracert_input' . $i . '" type="text" placeholder="Trace route destination">
-    <button class="btn btn-primary" id="tracert_btn' . $i . '" onclick="trace_route(\'' . $row['name'] . '\',\'tracert_input' . $i . '\',\'tracert_btn' . $i . '\')">Trace route</button>
+    <div class="container">
+    <div class="row justify-content-center">
+            <button class="btn btn-primary col-sm-5 mb-2" onclick="shutdown_computer(\'' . $row['name'] . '\', \'false\')">Shutdown</button>
+            <div class="col-1"></div>
+            <button class="btn btn-primary col-sm-5 mb-2" onclick="shutdown_computer(\'' . $row['name'] . '\', \'true\')">Restart</button>
+    </div>
+    <div class="row justify-content-center">
+            <button class="btn btn-primary col-sm-5 mb-2"id="ping" onclick="ping_computer(\'' . $row['name'] . '\',\'ping\')">Ping</button>
+            <div class="col-1"></div>
+            <button class="btn btn-primary col-sm-5 mb-2"id="open_port" onclick="get_open_ports(\'' . $row['name'] . '\',\'open_port\')">Open ports</button>
+    </div>
+    <div class="row justify-content-center">
+            <input id="tracert_input" class="col-sm-7 mb-2" type="text" placeholder="Trace route destination">
+            <div class="col-1"></div>
+            <button class="btn btn-primary col-sm-3 mb-2" id="tracert_btn" onclick="trace_route(\'' . $row['name'] . '\',\'tracert_input\',\'tracert_btn\')">Trace route</button>
+    </div>
+    </div>
     <hr>';
 
-    //PC Info
-    //Beri tombol logo Refresh di setiap value
+    //PC Info (Ambil dari DB)
+    //TODO: Beri tombol logo Refresh di setiap value (Sebelum value)
+    //Refresh: Ambil pake CIM
     echo 'OS: ' . $row['os'] . '<br>';
     echo 'CPU: ' . $row['cpu'] . '<br>';
     echo 'iGPU: ' . $row['i_gpu'] . '<br>';
@@ -64,5 +86,4 @@ foreach ($stmt as $row) {
         echo '<li>' . $row2['app'] . '</li>';
     }
     echo "</ul>";
-    $i++;
 }
