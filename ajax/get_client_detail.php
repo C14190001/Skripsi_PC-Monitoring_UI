@@ -17,7 +17,7 @@ $stmt->execute();
 
 foreach ($stmt as $row) {
     //1. Load data dari DB [OK]
-    //2. jika DB null, maka pake shell_exec() lalu simpan value nya ke DB
+    //2. jika DB null, maka pake shell_exec() lalu simpan value nya ke DB [...]
     //3. Echo (Tombol Refresh) (spesifikasi): (Value)
 
     //Status (Selalu diupdate)
@@ -67,27 +67,89 @@ foreach ($stmt as $row) {
     </div>
     <hr>';
 
-    //PC Info (Ambil dari DB)
-    //TODO: Beri tombol logo Refresh di setiap value (Sebelum value)
-    //Refresh: Ambil pake CIM
-    echo 'OS: ' . $row['os'] . '<br>';
-    echo 'CPU: ' . $row['cpu'] . '<br>';
-    echo 'iGPU: ' . $row['i_gpu'] . '<br>';
-    echo 'eGPU: ' . $row['e_gpu'] . '<br>';
-    echo 'RAM: ' . $row['ram'] . ' GB<br>';
-    echo 'Memory: ' . $row['mem'] . ' GB<br>';
+    //PC Info
+    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('".$row['name']."', 'os', 'os')\"><img src=\"arrow-clockwise.svg\" alt=\"Refresh\"></button>";
+    if(is_null($row['os'])){
+        $get_val = str_replace("Caption : ","", shell_exec('powershell -command "Get-CimInstance -ClassName Win32_OperatingSystem  -ComputerName ' . $row['name'] . ' | Format-List Caption"' . " 2>&1"));
+        echo 'OS: <span id="os">' . $get_val . '</span><br>';
+        $stmt3 = $pdo->prepare("UPDATE `clients` SET `os` = ? WHERE `client_id` = ?");
+        $stmt3->execute([$get_val,$id]);
+    }
+    else{
+        echo 'OS: <span id="os">' . $row['os'] . '</span><br>';
+    }
+
+    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('".$row['name']."', 'cpu', 'cpu')\"><img src=\"arrow-clockwise.svg\" alt=\"Refresh\"></button>";
+    if(is_null($row['cpu'])){
+        $get_val = str_replace("Name : ","", shell_exec('powershell -command "Get-CimInstance -ClassName Win32_Processor -ComputerName ' . $row['name'] . ' | Format-List Name"' . " 2>&1"));
+        echo 'CPU: <span id="cpu">' . $get_val . '</span><br>';
+        $stmt3 = $pdo->prepare("UPDATE `clients` SET `cpu` = ? WHERE `client_id` = ?");
+        $stmt3->execute([$get_val,$id]);
+    }
+    else{
+        echo 'CPU: <span id="cpu">' . $row['cpu'] . '</span><br>';
+    }
+
+    echo '<div class="container"><div class="row"><div class="col-1">';
+    //echo "<button class=\"btn btn-primary\" onclick=\"get_computer_info('".$row['name']."', 'gpu', 'gpu')\"><img src=\"arrow-clockwise.svg\" alt=\"Refresh\"></button>";
+    echo '</div><div class="col">';
+    if(is_null($row['i_gpu'])&&is_null($row['e_gpu'])){
+        //Kode ambil GPU (INFO: Check file get_computer_gpu.php)
+        //Cek jika GPU nya ada 2. jika ada, dipisah
+        //echo '<span id="gpu">iGPU: ' . $row['i_gpu'] . '<br>eGPU: '. $row['e_gpu'].'</span><br>';
+    }
+    else{
+        echo '<span id="gpu">iGPU: ' . $row['i_gpu'] . '<br>eGPU: '. $row['e_gpu'].'</span><br>';
+    }
+    echo '</div></div></div>';
+
+    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('".$row['name']."', 'ram', 'ram')\"><img src=\"arrow-clockwise.svg\" alt=\"Refresh\"></button>";
+    if($row['ram'] == "0"){
+        $get_val = round(str_replace("TotalVisibleMemorySize : ","", shell_exec('powershell -command "Get-CimInstance -ClassName Win32_OperatingSystem -ComputerName ' . $row['name'] . ' | Format-List TotalVisibleMemorySize"' . " 2>&1"))/1000000, 2);
+        echo 'RAM: <span id="ram">' . $get_val . ' GB</span><br>';
+        $stmt3 = $pdo->prepare("UPDATE `clients` SET `ram` = ? WHERE `client_id` = ?");
+        $stmt3->execute([$get_val,$id]);
+    }
+    else{
+        echo 'RAM: <span id="ram">' . $row['ram'] . ' GB</span><br>';
+    }
+
+    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('".$row['name']."', 'hdd', 'mem')\"><img src=\"arrow-clockwise.svg\" alt=\"Refresh\"></button>";
+    if($row['mem'] == "0"){
+        $get_val = round(str_replace("Size : ","", shell_exec('powershell -command "Get-CimInstance -ClassName Win32_LogicalDisk  -ComputerName ' . $row['name'] . ' | Format-List Size"' . " 2>&1"))/1073741824, 2);
+        echo 'Memory: <span id="mem">' . $get_val . ' GB</span><br>';
+        $stmt3 = $pdo->prepare("UPDATE `clients` SET `mem` = ? WHERE `client_id` = ?");
+        $stmt3->execute([$get_val,$id]);
+    }
+    else{
+        echo 'Memory: <span id="mem">' . $row['mem'] . ' GB</span><br>';
+    }
+
+    //Button Refresh + Cek NULL / Upload DB
     echo 'Network: <ul>';
+    $is_null = true;
     $stmt2 = $pdo->prepare("SELECT * FROM `clients_network` WHERE `client_id` = " . $id);
     $stmt2->execute();
     foreach ($stmt2 as $row2) {
         echo '<li>' . $row2['ip'] . " - " . $row2['mac'] . '</li>';
+        $is_null =false;
     }
+    if($is_null){
+
+    }
+
     echo "</ul>";
+    //Button Refresh + Cek NULL / Upload DB
     echo 'Apps: <ul>';
+    $is_null = true;
     $stmt2 = $pdo->prepare("SELECT * FROM `clients_app` WHERE `client_id` = " . $id);
     $stmt2->execute();
     foreach ($stmt2 as $row2) {
         echo '<li>' . $row2['app'] . '</li>';
+        $is_null =false;
+    }
+    if($is_null){
+
     }
     echo "</ul>";
 }

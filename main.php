@@ -67,7 +67,6 @@ try {
                     $a = $client + "'s shutdown results";
                 }
                 show_info_modal($a, msg);
-                //alert(msg);
             });
         }
 
@@ -82,7 +81,6 @@ try {
             }).done(function(msg) {
                 $a = $client + "'s ping results";
                 show_info_modal($a, msg);
-                //alert(msg);
                 document.getElementById($output).innerHTML = "Ping";
             });
         }
@@ -98,7 +96,6 @@ try {
             }).done(function(msg) {
                 $a = $client + "'s open ports";
                 show_info_modal($a, msg);
-                //alert(msg);
                 document.getElementById($output).innerHTML = "Open ports";
             });
         }
@@ -120,7 +117,6 @@ try {
                 }
                 $a = $client + "'s trace route to " + $b;
                 show_info_modal($a, msg);
-                //alert(msg);
                 document.getElementById($output).innerHTML = "Trace route";
             });
         }
