@@ -34,7 +34,8 @@ foreach ($stmt as $row) {
     }
 
     echo ">>[is_null: " . $is_null . "]<<"; //DEBUG
-    if($is_null){
+    if ($is_null) {
+        //(Ambil kode nya get_computer_***usage.php)
         //Get CPU usage
         //Get RAM usage
         //Get HDD usage
@@ -46,20 +47,23 @@ foreach ($stmt as $row) {
     <br><br>
     <div class="container">
     <div class="row justify-content-center">
-            <button class="btn btn-primary col-sm-5 mb-2" onclick="shutdown_computer(\'' . $row['name'] . '\', \'false\')">Shutdown</button>
+            <button class="btn btn-primary col-5 mb-2" onclick="shutdown_computer(\'' . $row['name'] . '\', \'false\')">Shutdown</button>
             <div class="col-1"></div>
-            <button class="btn btn-primary col-sm-5 mb-2" onclick="shutdown_computer(\'' . $row['name'] . '\', \'true\')">Restart</button>
+            <button class="btn btn-primary col-5 mb-2" onclick="shutdown_computer(\'' . $row['name'] . '\', \'true\')">Restart</button>
     </div>
     <div class="row justify-content-center">
-            <button class="btn btn-primary col-sm-5 mb-2"id="ping" onclick="ping_computer(\'' . $row['name'] . '\',\'ping\')">Ping</button>
+            <button class="btn btn-primary col-5 mb-2"id="ping" onclick="ping_computer(\'' . $row['name'] . '\',\'ping\')">Ping</button>
             <div class="col-1"></div>
-            <button class="btn btn-primary col-sm-5 mb-2"id="open_port" onclick="get_open_ports(\'' . $row['name'] . '\',\'open_port\')">Open ports</button>
+            <button class="btn btn-primary col-5 mb-2"id="open_port" onclick="get_open_ports(\'' . $row['name'] . '\',\'open_port\')">Open ports</button>
     </div>
     <div class="row justify-content-center">
-            <input id="tracert_input" class="col-sm-7 mb-2" type="text" placeholder="Trace route destination">
+            <input id="tracert_input" class="col-7 mb-2" type="text" placeholder="Trace route destination">
             <div class="col-1"></div>
-            <button class="btn btn-primary col-sm-3 mb-2" id="tracert_btn" onclick="trace_route(\'' . $row['name'] . '\',\'tracert_input\',\'tracert_btn\')">Trace route</button>
+            <button class="btn btn-primary col-3 mb-2" id="tracert_btn" onclick="trace_route(\'' . $row['name'] . '\',\'tracert_input\',\'tracert_btn\')">Trace route</button>
     </div>
+    <div class="row justify-content-center">
+    <button class="btn btn-primary col-11 mb-2"id="refresh_btn" onclick="refresh_client(\'' . $row['name'] . '\',\'' . $id . '\')">Refresh all info</button>
+    </div
     </div>
     <hr>';
 

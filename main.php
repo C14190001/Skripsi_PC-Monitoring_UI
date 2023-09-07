@@ -154,7 +154,16 @@ try {
             $('#info_modal').modal('show');
         }
 
-        //[Function]
+        function refresh_client($client, $id){
+            //Refresh semua info dalam Client
+            document.getElementById("refresh_btn").innerHTML = "Refreshing...";
+
+            //Kode AJAX Refresh semua info + Update DB
+
+            //Done: get_client_detail($id)
+        }
+
+        //[Function yg belum]
         //get_client_info_all
         //download_csv()
     </script>
@@ -172,7 +181,7 @@ try {
                 <a class="nav-item nav-link" href="#">Download .CSV</a>
             </div>
             <div class="navbar-nav ml-auto">
-                <button class="btn btn-primary" onclick="show_info_modal('Info','LogOut Success.')">Logout</button>
+                <button class="btn btn-primary" onclick="">Logout</button>
             </div>
         </div>
 
@@ -207,13 +216,13 @@ try {
                     $stmt2->execute();
                     $c = 0;
                     foreach ($stmt2 as $row2) {
-                        echo $row2['ip'];
-                        $c++;
-                        echo ', ';
                         if ($c > 1) {
                             echo '...';
                             break;
                         }
+                        echo '• ' . $row2['ip'];
+                        echo '<br>';
+                        $c++;
                     }
 
                     echo "</div><div class=\"col-1\"></div></button><br><br>";

@@ -10,3 +10,4 @@ foreach($Apps as $app){
 }
 
 print_r($StrApps);
+//DB: delete semua app where id ... + lalu upload / insert array nya

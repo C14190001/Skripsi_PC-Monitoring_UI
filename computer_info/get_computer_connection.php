@@ -15,12 +15,14 @@ try {
 $target = $_POST["target"];
 $id = $_POST['id'];
 exec("ping -n 1 " . $target, $output, $result);
+
 if ($result == 0) {
     echo "<span style=\"color:green;font-size: 20px;\">⦿</span>";
-    $stmt = $pdo->prepare("UPDATE `clients_status` SET `connection_status` = ? WHERE `client_id` = ?");
-    $stmt->execute([1,$id]);
+    // $stmt = $pdo->prepare("UPDATE `clients_status` SET `connection_status` = ? WHERE `client_id` = ?");
+    // $stmt->execute([1,$id]);
 } else {
     echo "<span style=\"color:red;font-size: 20px;\">⦿</span>";
-    $stmt = $pdo->prepare("UPDATE `clients_status` SET `connection_status` = ? WHERE `client_id` = ?");
-    $stmt->execute([0,$id]);
+    // $stmt = $pdo->prepare("UPDATE `clients_status` SET `connection_status` = ? WHERE `client_id` = ?");
+    // $stmt->execute([0,$id]);
 }
+//Check DB jika null, lalu insert / update <---

@@ -9,3 +9,4 @@ foreach ($address as $a){
     }
 }
 print_r($address2);
+//DB: delete semua app where id ... + lalu upload / insert array nya

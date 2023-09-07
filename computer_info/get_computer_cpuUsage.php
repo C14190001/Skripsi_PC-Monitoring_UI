@@ -11,3 +11,7 @@ foreach ($cpuUsages as $core) {
     }
 }
 print_r($cpuUsages2);
+
+//Array nya di average persen nya
+//lalu dioutput
+//Check DB jika null lalu insert / update
