@@ -82,7 +82,7 @@
     <span>
         <?php
         $specs = ["name", "os", "cpu", "gpu", "ram", "hdd", "ipMac", "apps", "uptime", "cpuUsage", "ramUsage", "hddUsage", "connection"];
-        $specs2 = ["PC name", "OS name", "CPU name", "GPU name", "RAM capacity", "HDD capacity", "IP & MAC", "Installed apps", "Uptime (Seconds)", "CPU usage", "RAM free space", "HDD free space", "Connection status"];
+        $specs2 = ["PC name", "OS name", "CPU name", "GPU name", "RAM capacity", "HDD capacity", "IP & MAC", "Installed apps", "Uptime (Seconds)", "CPU usage", "RAM usage", "HDD usage", "Connection status"];
         $ds = ldap_connect("LDAP://192.168.56.103"); //ADSI
         if ($ds) {
             $r = ldap_bind($ds, "Administrator@myserver.com", "abcd1234."); //Administrator (UNSAFE LOL)

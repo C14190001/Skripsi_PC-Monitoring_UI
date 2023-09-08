@@ -39,13 +39,14 @@ try {
             });
         }
 
-        function get_computer_info($client, $info, $output) {
+        function get_computer_info($client, $id, $info, $output) {
             document.getElementById($output).innerHTML = "...";
             $.ajax({
                 type: "POST",
                 url: "computer_info/get_computer_" + $info + ".php",
                 data: ({
                     target: $client,
+                    id: $id,
                 }),
             }).done(function(msg) {
                 document.getElementById($output).innerHTML = msg;
@@ -150,7 +151,7 @@ try {
             $('#info_modal').modal('show');
         }
 
-        function refresh_client($client, $id){
+        function refresh_client($client, $id) {
             //Refresh semua info dalam Client
             document.getElementById("refresh_btn").innerHTML = "Refreshing...";
 
@@ -177,7 +178,7 @@ try {
                 <a class="nav-item nav-link" href="#">Download .CSV</a>
             </div>
             <div class="navbar-nav ml-auto">
-                <button class="btn btn-primary" onclick="">Logout</button>
+                <button class="btn btn-primary" onclick="">(Dummy button)</button>
             </div>
         </div>
 
