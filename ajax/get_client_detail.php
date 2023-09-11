@@ -40,7 +40,7 @@ foreach ($stmt as $row) {
             <button class="btn btn-primary col-3 mb-2" id="tracert_btn" onclick="trace_route(\'' . $row['name'] . '\',\'tracert_input\',\'tracert_btn\')">Trace route</button>
     </div>
     <div class="row justify-content-center">
-    <button class="btn btn-primary col-11 mb-2"id="refresh_btn" onclick="refresh_client(\'' . $row['name'] . '\',\'' . $id . '\')">Update all info</button>
+    <button class="btn btn-primary col-11 mb-2"id="update_btn" onclick="update_client(\'' . $row['name'] . '\',\'' . $id . '\')">Update all info</button>
     </div
     </div>
     <hr>';

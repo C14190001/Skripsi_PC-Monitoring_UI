@@ -73,10 +73,14 @@ try {
                 }),
             }).done(function(msg) {
                 if ($restart == "true") {
-                    sleep(2000).then(() => { document.getElementById("restart_btn").innerHTML = "Restart"; });
+                    sleep(2000).then(() => {
+                        document.getElementById("restart_btn").innerHTML = "Restart";
+                    });
                     //$a = $client + "'s restart results";
                 } else {
-                    sleep(2000).then(() => { document.getElementById("shutdown_btn").innerHTML = "Shutdown"; });
+                    sleep(2000).then(() => {
+                        document.getElementById("shutdown_btn").innerHTML = "Shutdown";
+                    });
                     //$a = $client + "'s shutdown results";
                 }
                 //show_info_modal($a, msg);
@@ -176,8 +180,11 @@ try {
             });
         }
 
-        function scan_devices_ad(){
-            $('#sd_modal').modal({backdrop: 'static', keyboard: false});
+        function scan_devices_ad() {
+            $('#sd_modal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
             $('#sd_modal').modal('show');
             document.getElementById("sd_modal_body").innerHTML = "Scanning...";
 
@@ -190,10 +197,25 @@ try {
             });
         }
 
+        function update_client($client_name, $id) {
+            document.getElementById("update_btn").innerHTML = "Updating all info...";
+            get_computer_info($client_name, $id, 'os', 'os');
+            get_computer_info($client_name, $id, 'cpu', 'cpu');
+            get_computer_info($client_name, $id, 'gpu', 'gpu');
+            get_computer_info($client_name, $id, 'ram', 'ram');
+            get_computer_info($client_name, $id, 'hdd', 'mem');
+            get_computer_info($client_name, $id, 'ipMac', 'net');
+            get_computer_info($client_name, $id, 'apps', 'app')
+            get_client_status($id);
+            sleep(2000).then(() => {
+                document.getElementById("update_btn").innerHTML = "Update all info";
+            });
+        }
+
         //[Function yg belum]
-        //update_client()
-        //update_all_client(): taruh di navbar, update semua informasi semua client, munculin modal "this might take a while", setelah selesai munculin modal "Done" dengan button Close
-        //download_csv(): jika ada yang Null, ambil data + simpan DB.
+        //1. Scan_devices()
+        //2. update_all_client(): taruh di navbar, update semua informasi semua client, munculin modal "this might take a while", setelah selesai munculin modal "Done" dengan button Close
+        //3. download_csv(): jika ada yang Null, ambil data + simpan DB.
     </script>
 </head>
 
