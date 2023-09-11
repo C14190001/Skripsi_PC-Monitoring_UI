@@ -26,6 +26,10 @@ try {
     <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
     <!----------------->
     <script>
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
         function get_client_detail($id) {
             document.getElementById('client_detail').innerHTML = "Loading...";
             $.ajax({
@@ -36,6 +40,7 @@ try {
                 }),
             }).done(function(msg) {
                 document.getElementById('client_detail').innerHTML = msg;
+                get_client_status($id);
             });
         }
 
@@ -54,6 +59,11 @@ try {
         }
 
         function shutdown_computer($client, $restart) {
+            if ($restart == "true") {
+                document.getElementById("restart_btn").innerHTML = "Restarting...";
+            } else {
+                document.getElementById("shutdown_btn").innerHTML = "Shutting down...";
+            }
             $.ajax({
                 type: "POST",
                 url: "computer_function/shutdown.php",
@@ -63,11 +73,13 @@ try {
                 }),
             }).done(function(msg) {
                 if ($restart == "true") {
-                    $a = $client + "'s restart results";
+                    sleep(2000).then(() => { document.getElementById("restart_btn").innerHTML = "Restart"; });
+                    //$a = $client + "'s restart results";
                 } else {
-                    $a = $client + "'s shutdown results";
+                    sleep(2000).then(() => { document.getElementById("shutdown_btn").innerHTML = "Shutdown"; });
+                    //$a = $client + "'s shutdown results";
                 }
-                show_info_modal($a, msg);
+                //show_info_modal($a, msg);
             });
         }
 
@@ -151,18 +163,37 @@ try {
             $('#info_modal').modal('show');
         }
 
-        function refresh_client($client, $id) {
-            //Refresh semua info dalam Client
-            document.getElementById("refresh_btn").innerHTML = "Refreshing...";
+        function get_client_status($client_id) {
+            document.getElementById("status").innerHTML = "Getting status...";
+            $.ajax({
+                type: "POST",
+                url: "ajax/get_client_status.php",
+                data: ({
+                    id: $client_id,
+                }),
+            }).done(function(msg) {
+                document.getElementById("status").innerHTML = msg;
+            });
+        }
 
-            //Kode AJAX Refresh semua info + Update DB
+        function scan_devices_ad(){
+            $('#sd_modal').modal({backdrop: 'static', keyboard: false});
+            $('#sd_modal').modal('show');
+            document.getElementById("sd_modal_body").innerHTML = "Scanning...";
 
-            //Done: get_client_detail($id)
+            $.ajax({
+                type: "POST",
+                url: "ajax/scan_devices_ad.php",
+                data: ({}),
+            }).done(function(msg) {
+                document.getElementById("sd_modal_body").innerHTML = msg;
+            });
         }
 
         //[Function yg belum]
-        //get_client_info_all
-        //download_csv()
+        //update_client()
+        //update_all_client(): taruh di navbar, update semua informasi semua client, munculin modal "this might take a while", setelah selesai munculin modal "Done" dengan button Close
+        //download_csv(): jika ada yang Null, ambil data + simpan DB.
     </script>
 </head>
 
@@ -174,11 +205,11 @@ try {
         </button>
         <div class="collapse navbar-collapse" id="topnav_menu">
             <div class="navbar-nav mr-auto">
-                <a class="nav-item nav-link" href="#" data-toggle="modal" data-target="#sd_modal" data-backdrop="static" data-keyboard="false">Scan Devices</a>
-                <a class="nav-item nav-link" href="#">Download .CSV</a>
+                <button class="btn btn-primary mr-2 mt-1" onclick="scan_devices_ad()">Scan Devices</button>
+                <button class="btn btn-primary mr-2 mt-1" href="#">Download .CSV</button>
             </div>
             <div class="navbar-nav ml-auto">
-                <button class="btn btn-primary" onclick="">(Dummy button)</button>
+                <button class="btn btn-primary mr-2 mt-1" onclick="">(Dummy button)</button>
             </div>
         </div>
 
@@ -235,13 +266,12 @@ try {
                             <div class="modal-header">
                                 <h4 class="modal-title">Scan Devices</h4>
                             </div>
-                            <div class="modal-body">
+                            <div class="modal-body" id="sd_modal_body">
                                 <p>Options: AD </p>
                                 <p>Results:</p>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-primary">Scan</button>
-                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                             </div>
 
                         </div>
