@@ -224,10 +224,9 @@ try {
             }
         }
 
-
         //[Function yg belum]
-        //2. update_all_client(): taruh di navbar, update semua informasi semua client, munculin modal "this might take a while", setelah selesai munculin modal "Done" dengan button Close
-        //3. download_csv(): jika ada yang Null, ambil data + simpan DB.
+        //(Optional) update_all_client(): taruh di navbar, update semua informasi semua client, munculin modal "this might take a while", setelah selesai munculin modal "Done" dengan button Close
+        //Download_csv(): jika ada yang Null, ambil data + simpan DB.
     </script>
 </head>
 
@@ -292,7 +291,7 @@ try {
                     echo "</div><div class=\"col-1\"></div></button><br><br>";
                     $i++;
                 }
-                if($is_null){
+                if ($is_null) {
                     echo "There are no clients in DB.";
                 }
                 ?>
