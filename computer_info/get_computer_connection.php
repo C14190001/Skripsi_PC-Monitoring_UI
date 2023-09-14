@@ -16,6 +16,13 @@ $target = $_POST["target"];
 $id = $_POST['id'];
 exec("ping -n 1 " . $target, $output, $result);
 
+foreach($output as $a){
+    if(str_contains($a,"Destination host unreachable")){
+        $result = 1; //Disconnected
+        break;
+    }
+}
+
 $stmt = $pdo->prepare("UPDATE `clients_status` SET `connection_status` = ? WHERE `client_id` = ?");
 if ($result == 0) {
     echo "<span style=\"color:green;font-size: 20px;\">⦿</span>";
