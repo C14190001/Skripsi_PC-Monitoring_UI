@@ -33,7 +33,7 @@ ldap_close($ds);
 
 //Membandingkan IP
 for ($i = 0; $i < count($ad_clients); $i++) {
-    echo $i + 1 . ". " . $ad_clients[$i] . ": ";
+    echo ($i + 1) . ". " . $ad_clients[$i] . ": ";
     //echo "MAC Array:<br>";
     $exec = shell_exec('powershell -command "Get-CimInstance -ClassName Win32_NetworkAdapterConfiguration -ComputerName ' . $ad_clients[$i] . ' | where {$_.MACAddress -ne $null } | Format-List MACAddress"' . " 2>&1");
     $exec = preg_replace('/\s+/', '', $exec);
@@ -84,9 +84,9 @@ for ($i = 0; $i < count($ad_clients); $i++) {
         $exec = str_replace(array('{', '}'), '', $exec); 
         $ip_arr = explode('IPAddress:', $exec); 
         array_splice($ip_arr, 0, 1);
-        for ($i = 0; $i < count($ip_arr); $i++) {
-            if (empty($ip_arr[$i])) {
-                $ip_arr[$i] = "N/A";
+        for ($j = 0; $j < count($ip_arr); $j++) {
+            if (empty($ip_arr[$j])) {
+                $ip_arr[$j] = "N/A";
             }
         }
 
@@ -97,16 +97,16 @@ for ($i = 0; $i < count($ad_clients); $i++) {
         // }
 
         //Add Networks
-        for ($i = 0; $i < count($mac_arr); $i++) {
-            if (str_contains($ip_arr[$i], ',')) {
-                $temp_ip = explode(',', $ip_arr[$i]);
-                for ($j = 0; $j < count($temp_ip); $j++) {
+        for ($j = 0; $j < count($mac_arr); $j++) {
+            if (str_contains($ip_arr[$j], ',')) {
+                $temp_ip = explode(',', $ip_arr[$j]);
+                for ($k = 0; $k < count($temp_ip); $k++) {
                     $stmt3 = $pdo->prepare("INSERT INTO `clients_network` (`network_id`, `client_id`, `ip`, `mac`) VALUES (NULL, ?, ?, ?)");
-                    $stmt3->execute([$new_id, $temp_ip[$j], $mac_arr[$i]]);
+                    $stmt3->execute([$new_id, $temp_ip[$k], $mac_arr[$j]]);
                 }
             } else {
                 $stmt3 = $pdo->prepare("INSERT INTO `clients_network` (`network_id`, `client_id`, `ip`, `mac`) VALUES (NULL, ?, ?, ?)");
-                $stmt3->execute([$new_id, $ip_arr[$i], $mac_arr[$i]]);
+                $stmt3->execute([$new_id, $ip_arr[$j], $mac_arr[$j]]);
             }
         }
         echo "<span style=\"color:green;\">Added to DB.</span>";

@@ -262,7 +262,9 @@ try {
                 $stmt = $pdo->prepare("SELECT * FROM `clients`");
                 $stmt->execute();
                 $i = 0;
+                $is_null = true;
                 foreach ($stmt as $row) {
+                    $is_null = false;
                     echo '<button type="button" class="btn btn-light w-100 p-1" onclick=\'get_client_detail(' .  $row['client_id'] . ')\'>
                     <div class="container">
                     <img src=\'icons\pc-display.svg\' alt=\'PC\' style=\'width:40px; float:right;\'>
@@ -289,6 +291,9 @@ try {
 
                     echo "</div><div class=\"col-1\"></div></button><br><br>";
                     $i++;
+                }
+                if($is_null){
+                    echo "There are no clients in DB.";
                 }
                 ?>
             </div>
