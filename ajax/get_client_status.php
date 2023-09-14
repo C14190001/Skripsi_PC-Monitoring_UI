@@ -95,5 +95,26 @@ foreach ($stmt as $row) {
     $stmt3->execute([$last_bootup_time, $id]);
 
     $get_current_time = strtotime(shell_exec('powershell -command "Invoke-Command -ComputerName ' . $target . ' -ScriptBlock {get-date}"' . " 2>&1"));
-    echo "Uptime: " . ($get_current_time - $get_uptime) . " Seconds";
+    //echo "Uptime: " . ($get_current_time - $get_uptime) . " Seconds";
+    echo "Uptime: ";
+    $uptime_secs = $get_current_time - $get_uptime;
+    $t_m = 0;
+    $t_h = 0;
+    $t_d = 0;
+    while ($uptime_secs >= 60) {
+        $t_m++;
+        $uptime_secs -= 60;
+    }
+    while ($t_m >= 60) {
+        $t_h++;
+        $t_m -= 60;
+    }
+    while ($t_h >= 24) {
+        $t_d++;
+        $t_h -= 24;
+    }
+    echo $t_d, " Days ";
+    echo $t_h, " Hours ";
+    echo $t_m, " Minutes ";
+    echo $uptime_secs, " Seconds ";
 }

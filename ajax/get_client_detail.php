@@ -46,7 +46,7 @@ foreach ($stmt as $row) {
     <hr>';
 
     //PC Info
-    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'os', 'os')\"><img src=\"arrow-clockwise.svg\" alt=\"Update\"></button>";
+    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'os', 'os')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
     if (is_null($row['os'])) {
         $get_val = explode("\n", str_replace("Caption : ", "", shell_exec('powershell -command "Get-CimInstance -ClassName Win32_OperatingSystem  -ComputerName ' . $row['name'] . ' | Format-List Caption"' . " 2>&1")));
         $get_val2 = [];
@@ -62,7 +62,7 @@ foreach ($stmt as $row) {
         echo 'OS: <span id="os">' . $row['os'] . '</span><br>';
     }
 
-    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'cpu', 'cpu')\"><img src=\"arrow-clockwise.svg\" alt=\"Update\"></button>";
+    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'cpu', 'cpu')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
     if (is_null($row['cpu'])) {
         $get_val = explode("\n", str_replace("Name : ", "", shell_exec('powershell -command "Get-CimInstance -ClassName Win32_Processor -ComputerName ' . $row['name'] . ' | Format-List Name"' . " 2>&1")));
         $get_val2 = [];
@@ -78,7 +78,7 @@ foreach ($stmt as $row) {
         echo 'CPU: <span id="cpu">' . $row['cpu'] . '</span><br>';
     }
 
-    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'gpu', 'gpu')\"><img src=\"arrow-clockwise.svg\" alt=\"Update\"></button>";
+    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'gpu', 'gpu')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
     if (is_null($row['i_gpu']) && is_null($row['e_gpu'])) {
         $get_val = explode("\n", str_replace("Name : ", "", shell_exec('powershell -command "Get-CimInstance -ClassName Win32_VideoController -ComputerName ' . $row['name'] . ' | Format-List Name"' . " 2>&1")));
         $get_val2 = [];
@@ -103,7 +103,7 @@ foreach ($stmt as $row) {
         echo '<span id="gpu">iGPU: ' . $row['i_gpu'] . '. eGPU: ' . $row['e_gpu'] . '</span><br>';
     }
 
-    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'ram', 'ram')\"><img src=\"arrow-clockwise.svg\" alt=\"Update\"></button>";
+    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'ram', 'ram')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
     if ($row['ram'] == "0") {
         $get_val = round(str_replace("TotalVisibleMemorySize : ", "", shell_exec('powershell -command "Get-CimInstance -ClassName Win32_OperatingSystem -ComputerName ' . $row['name'] . ' | Format-List TotalVisibleMemorySize"' . " 2>&1")) / 1000000, 2);
         echo 'RAM: <span id="ram">' . $get_val . ' GB</span><br>';
@@ -113,7 +113,7 @@ foreach ($stmt as $row) {
         echo 'RAM: <span id="ram">' . $row['ram'] . ' GB</span><br>';
     }
 
-    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'hdd', 'mem')\"><img src=\"arrow-clockwise.svg\" alt=\"Update\"></button>";
+    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'hdd', 'mem')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
     if ($row['mem'] == "0") {
         $get_val = round(str_replace("Size : ", "", shell_exec('powershell -command "Get-CimInstance -ClassName Win32_LogicalDisk  -ComputerName ' . $row['name'] . ' | Format-List Size"' . " 2>&1")) / 1073741824, 2);
         echo 'Memory: <span id="mem">' . $get_val . ' GB</span><br>';
@@ -123,7 +123,7 @@ foreach ($stmt as $row) {
         echo 'Memory: <span id="mem">' . $row['mem'] . ' GB</span><br>';
     }
 
-    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'ipMac', 'net')\"><img src=\"arrow-clockwise.svg\" alt=\"Update\"></button>";
+    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'ipMac', 'net')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
     echo 'Network: <ul id="net">';
     $is_null = true;
     $stmt2 = $pdo->prepare("SELECT * FROM `clients_network` WHERE `client_id` = " . $id);
@@ -186,7 +186,7 @@ foreach ($stmt as $row) {
     }
 
     echo "</ul>";
-    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'apps', 'app')\"><img src=\"arrow-clockwise.svg\" alt=\"Update\"></button>";
+    echo "<button class=\"btn btn-primary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'apps', 'app')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
     echo 'Apps: <ul id="app">';
     $is_null = true;
     $stmt2 = $pdo->prepare("SELECT * FROM `clients_app` WHERE `client_id` = " . $id);

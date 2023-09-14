@@ -212,6 +212,17 @@ try {
             });
         }
 
+        function get_client_list() {
+            document.getElementById("client_list").innerHTML = "Loading...";
+            $.ajax({
+                type: "POST",
+                url: "ajax/get_client_list.php",
+                data: ({}),
+            }).done(function(msg) {
+                document.getElementById("client_list").innerHTML = msg;
+            });
+        }
+
         //[Function yg belum]
         //1. Scan_devices()
         //2. update_all_client(): taruh di navbar, update semua informasi semua client, munculin modal "this might take a while", setelah selesai munculin modal "Done" dengan button Close
@@ -242,42 +253,47 @@ try {
                 <div class="container">
                     <div class="row mt-3">
                         <h4 class="col-8">Clients</h4>
-                        <button class="btn btn-primary col" onclick="refresh_clients_list()" style="float: right;">Refresh All</button>
+                        <!--Jika loading daftar Client terlalu lama (karena kebanyakan), onclick diganti jadi "refresh_clients_list"-->
+                        <button class="btn btn-primary col" onclick="get_client_list()" style="float: right;">Refresh</button>
                     </div>
                 </div>
                 <hr>
+                <div id="client_list">
+                <!--Jika loading daftar Client terlalu lama (karena kebanyakan), hapus div client_list + un-comment kode .php dibawah-->
+                    <script>get_client_list()</script>
+                </div>
                 <?php
-                $stmt = $pdo->prepare("SELECT * FROM `clients`");
-                $stmt->execute();
-                $i = 0;
-                foreach ($stmt as $row) {
-                    echo '<button type="button" class="btn btn-light w-100" onclick=\'get_client_detail(' .  $row['client_id'] . ')\'>
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-1"><span id=\'conn_stat' . $i . '\'></span></div>
-                            <div class="col" style="text-align: left;"><b>' . $row['name'] . '</b></div>
-                        </div>
-                        <div class="row">
-                            <div class="col" style="vertical-align: top; text-align: left;">';
+                // $stmt = $pdo->prepare("SELECT * FROM `clients`");
+                // $stmt->execute();
+                // $i = 0;
+                // foreach ($stmt as $row) {
+                //     echo '<button type="button" class="btn btn-light w-100 p-1" onclick=\'get_client_detail(' .  $row['client_id'] . ')\'>
+                //     <div class="container">
+                //     <img src=\'icons\pc-display.svg\' alt=\'PC\' style=\'width:40px; float:right;\'>
+                //         <div class="row">
+                //             <div class="col-1"><span id=\'conn_stat' . $i . '\'></span></div>
+                //             <div class="col" style="text-align: left;"><b>' . $row['name'] . '</b></div>
+                //         </div>
+                //         <div class="row">
+                //             <div class="col" style="vertical-align: top; text-align: left;">';
+                //     //IP Address
+                //     echo '<script>check_computer_connection(\'' . $row['name'] . '\',\'' . $row['client_id'] . '\',\'conn_stat' . $i . '\')</script>';
+                //     $stmt2 = $pdo->prepare("SELECT ip from clients_network WHERE client_id = " . $row['client_id']);
+                //     $stmt2->execute();
+                //     $c = 0;
+                //     foreach ($stmt2 as $row2) {
+                //         if ($c > 1) {
+                //             echo '...';
+                //             break;
+                //         }
+                //         echo '• ' . $row2['ip'];
+                //         echo '<br>';
+                //         $c++;
+                //     }
 
-                    //IP Address
-                    echo '<script>check_computer_connection(\'' . $row['name'] . '\',\'' . $row['client_id'] . '\',\'conn_stat' . $i . '\')</script>';
-                    $stmt2 = $pdo->prepare("SELECT ip from clients_network WHERE client_id = " . $row['client_id']);
-                    $stmt2->execute();
-                    $c = 0;
-                    foreach ($stmt2 as $row2) {
-                        if ($c > 1) {
-                            echo '...';
-                            break;
-                        }
-                        echo '• ' . $row2['ip'];
-                        echo '<br>';
-                        $c++;
-                    }
-
-                    echo "</div><div class=\"col-1\"></div></button><br><br>";
-                    $i++;
-                }
+                //     echo "</div><div class=\"col-1\"></div></button><br><br>";
+                //     $i++;
+                // }
                 ?>
             </div>
             <div class="col-9" style="text-align: justify; height: 90vh; overflow-y: scroll;">
@@ -316,7 +332,7 @@ try {
                     </div>
                 </div>
 
-                <div id='client_detail'></div>
+                <div id='client_detail'>Select client on the left for details.</div>
             </div>
         </div>
     </div>
