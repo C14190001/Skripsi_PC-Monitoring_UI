@@ -317,7 +317,7 @@ try {
                                 </div>
                             </div>
                             <div class="modal-footer" id="sd_modal_footer">
-                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="document.getElementById('sd_dn_input').value=''; document.getElementById('sd_results').innerHTML=''" data-dismiss="modal">Close</button>
                             </div>
 
                         </div>
