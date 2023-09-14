@@ -196,7 +196,7 @@ foreach ($stmt as $row) {
         $is_null = false;
     }
     if ($is_null) {
-        $Apps = explode("\n", str_replace(array("DisplayName : "), array(""), shell_exec('powershell -command "Invoke-Command -ComputerName "' . $row['name'] . '" -FilePath .computer_info\installed_apps.ps1"' . " 2>&1")));
+        $Apps = explode("\n", str_replace(array("DisplayName : "), array(""), shell_exec('powershell -command "Invoke-Command -ComputerName "' . $row['name'] . '" -FilePath ..\computer_info\installed_apps.ps1"' . " 2>&1")));
         $StrApps = [];
         foreach ($Apps as $app) {
             if (!empty($app)) {

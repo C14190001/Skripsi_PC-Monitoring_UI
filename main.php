@@ -180,23 +180,6 @@ try {
             });
         }
 
-        function scan_devices_ad() {
-            $('#sd_modal').modal({
-                backdrop: 'static',
-                keyboard: false
-            });
-            $('#sd_modal').modal('show');
-            document.getElementById("sd_modal_body").innerHTML = "Scanning...";
-
-            $.ajax({
-                type: "POST",
-                url: "ajax/scan_devices_ad.php",
-                data: ({}),
-            }).done(function(msg) {
-                document.getElementById("sd_modal_body").innerHTML = msg;
-            });
-        }
-
         function update_client($client_name, $id) {
             document.getElementById("update_btn").innerHTML = "Updating all info...";
             get_computer_info($client_name, $id, 'os', 'os');
@@ -223,8 +206,26 @@ try {
             });
         }
 
+        function scan_devices_ad() {
+            if (document.getElementById("sd_dn_input").value == "") {
+                alert("Please enter Distinguished Name");
+            } else {
+                console.log(document.getElementById("sd_dn_input").value);
+                document.getElementById("sd_results").innerHTML = "Searching for Computers...";
+                $.ajax({
+                    type: "POST",
+                    url: "ajax/scan_devices_ad.php",
+                    data: ({
+                        dn_search: document.getElementById("sd_dn_input").value,
+                    }),
+                }).done(function(msg) {
+                    document.getElementById("sd_results").innerHTML = msg;
+                });
+            }
+        }
+
+
         //[Function yg belum]
-        //1. Scan_devices()
         //2. update_all_client(): taruh di navbar, update semua informasi semua client, munculin modal "this might take a while", setelah selesai munculin modal "Done" dengan button Close
         //3. download_csv(): jika ada yang Null, ambil data + simpan DB.
     </script>
@@ -238,7 +239,7 @@ try {
         </button>
         <div class="collapse navbar-collapse" id="topnav_menu">
             <div class="navbar-nav mr-auto">
-                <button class="btn btn-primary mr-2 mt-1" onclick="scan_devices_ad()">Scan Devices</button>
+                <button class="btn btn-primary mr-2 mt-1" onclick="$('#sd_modal').modal({backdrop: 'static',keyboard: false});$('#sd_modal').modal('show');">Scan Devices</button>
                 <button class="btn btn-primary mr-2 mt-1" href="#">Download .CSV</button>
             </div>
             <div class="navbar-nav ml-auto">
@@ -253,47 +254,42 @@ try {
                 <div class="container">
                     <div class="row mt-3">
                         <h4 class="col-8">Clients</h4>
-                        <!--Jika loading daftar Client terlalu lama (karena kebanyakan), onclick diganti jadi "refresh_clients_list"-->
-                        <button class="btn btn-primary col" onclick="get_client_list()" style="float: right;">Refresh</button>
+                        <button class="btn btn-primary col" onclick="refresh_clients_list()" style="float: right;">Refresh</button>
                     </div>
                 </div>
                 <hr>
-                <div id="client_list">
-                <!--Jika loading daftar Client terlalu lama (karena kebanyakan), hapus div client_list + un-comment kode .php dibawah-->
-                    <script>get_client_list()</script>
-                </div>
                 <?php
-                // $stmt = $pdo->prepare("SELECT * FROM `clients`");
-                // $stmt->execute();
-                // $i = 0;
-                // foreach ($stmt as $row) {
-                //     echo '<button type="button" class="btn btn-light w-100 p-1" onclick=\'get_client_detail(' .  $row['client_id'] . ')\'>
-                //     <div class="container">
-                //     <img src=\'icons\pc-display.svg\' alt=\'PC\' style=\'width:40px; float:right;\'>
-                //         <div class="row">
-                //             <div class="col-1"><span id=\'conn_stat' . $i . '\'></span></div>
-                //             <div class="col" style="text-align: left;"><b>' . $row['name'] . '</b></div>
-                //         </div>
-                //         <div class="row">
-                //             <div class="col" style="vertical-align: top; text-align: left;">';
-                //     //IP Address
-                //     echo '<script>check_computer_connection(\'' . $row['name'] . '\',\'' . $row['client_id'] . '\',\'conn_stat' . $i . '\')</script>';
-                //     $stmt2 = $pdo->prepare("SELECT ip from clients_network WHERE client_id = " . $row['client_id']);
-                //     $stmt2->execute();
-                //     $c = 0;
-                //     foreach ($stmt2 as $row2) {
-                //         if ($c > 1) {
-                //             echo '...';
-                //             break;
-                //         }
-                //         echo '• ' . $row2['ip'];
-                //         echo '<br>';
-                //         $c++;
-                //     }
+                $stmt = $pdo->prepare("SELECT * FROM `clients`");
+                $stmt->execute();
+                $i = 0;
+                foreach ($stmt as $row) {
+                    echo '<button type="button" class="btn btn-light w-100 p-1" onclick=\'get_client_detail(' .  $row['client_id'] . ')\'>
+                    <div class="container">
+                    <img src=\'icons\pc-display.svg\' alt=\'PC\' style=\'width:40px; float:right;\'>
+                        <div class="row">
+                            <div class="col-1"><span id=\'conn_stat' . $i . '\'></span></div>
+                            <div class="col" style="text-align: left;"><b>' . $row['name'] . '</b></div>
+                        </div>
+                        <div class="row">
+                            <div class="col" style="vertical-align: top; text-align: left;">';
+                    //IP Address
+                    echo '<script>check_computer_connection(\'' . $row['name'] . '\',\'' . $row['client_id'] . '\',\'conn_stat' . $i . '\')</script>';
+                    $stmt2 = $pdo->prepare("SELECT ip from clients_network WHERE client_id = " . $row['client_id']);
+                    $stmt2->execute();
+                    $c = 0;
+                    foreach ($stmt2 as $row2) {
+                        if ($c > 1) {
+                            echo '...';
+                            break;
+                        }
+                        echo '• ' . $row2['ip'];
+                        echo '<br>';
+                        $c++;
+                    }
 
-                //     echo "</div><div class=\"col-1\"></div></button><br><br>";
-                //     $i++;
-                // }
+                    echo "</div><div class=\"col-1\"></div></button><br><br>";
+                    $i++;
+                }
                 ?>
             </div>
             <div class="col-9" style="text-align: justify; height: 90vh; overflow-y: scroll;">
@@ -305,10 +301,22 @@ try {
                                 <h4 class="modal-title">Scan Devices</h4>
                             </div>
                             <div class="modal-body" id="sd_modal_body">
-                                <p>Options: AD </p>
-                                <p>Results:</p>
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-9">
+                                            <input id="sd_dn_input" class="w-100 h-100" type="text" placeholder="Distinguished Name">
+                                        </div>
+                                        <div class="col-3">
+                                            <button class="btn btn-primary w-100 h-100" id="sd_dn_search" onclick="scan_devices_ad()">Search</button>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <span id="sd_results"></span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="modal-footer">
+                            <div class="modal-footer" id="sd_modal_footer">
                                 <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                             </div>
 

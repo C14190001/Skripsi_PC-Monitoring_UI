@@ -13,42 +13,111 @@ try {
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
+//Ambil nama Client dari AD
+$refresh_btn = false;
+$dn_search = $_POST['dn_search'];
+echo "<b>Search Results:</b><br>";
 $ds = ldap_connect($ldap_host);
+$ad_clients = [];
 if ($ds) {
     $r = ldap_bind($ds, $ldap_user, $ldap_pass);
     if ($r == 1) {
-        $sr = ldap_search($ds, "OU=Computers,OU=My OU,DC=myserver,DC=com", "(objectClass=Computer)", array("cn", "dn"));
+        $sr = ldap_search($ds, $dn_search, "(objectClass=Computer)", array("cn", "dn"));
         $info = ldap_get_entries($ds, $sr);
         for ($i = 0; $i < $info["count"]; $i++) {
-            echo $i . " MAC:<br>";
-
-            //0. Get MAC client AD
-            $exec = shell_exec('powershell -command "Get-CimInstance -ClassName Win32_NetworkAdapterConfiguration -ComputerName ' . $info[$i]["cn"][0] . ' | where {$_.MACAddress -ne $null } | Format-List MACAddress"' . " 2>&1");
-            $exec = preg_replace('/\s+/', '', $exec);
-            $mac_arr = explode('MACAddress:', $exec);
-            array_splice($mac_arr, 0, 1);
-            //--> $mac_arr skrg adalah Array MAC <--
-
-            print_r($mac_arr);
-            echo "<br>SQL CODE:<br>";
-
-            $sqlWhere = "WHERE `client_specs`.`mac` LIKE '%";
-            for ($i = 0; $i < count($mac_arr); $i++) {
-                $sqlWhere .= $mac_arr[$i] . "%'";
-                if ($i < count($mac_arr) - 1) {
-                    $sqlWhere .= "AND `client_specs`.`mac` LIKE '%";
-                }
-            }
-            echo $sqlWhere;
-
-            //1. Jalankan SQL, query sqlWhere
-
-            //2. Jika MAC nya unique (hasil query di DB kosong), tambahkan di DB
-            //INSERT table clients (nama pc doang).
-            //INSERT table status (id client doang).
-            //Apps & Network: biarin kosong.
-
-            //Jika sudah scan / tambahkan, munculkan alert "Devices yang ditambahkan ...."
+            array_push($ad_clients, $info[$i]["cn"][0]);
         }
     }
+}
+ldap_close($ds);
+
+//Membandingkan IP
+for ($i = 0; $i < count($ad_clients); $i++) {
+    echo $i + 1 . ". " . $ad_clients[$i] . ": ";
+    //echo "MAC Array:<br>";
+    $exec = shell_exec('powershell -command "Get-CimInstance -ClassName Win32_NetworkAdapterConfiguration -ComputerName ' . $ad_clients[$i] . ' | where {$_.MACAddress -ne $null } | Format-List MACAddress"' . " 2>&1");
+    $exec = preg_replace('/\s+/', '', $exec);
+    $mac_arr = explode('MACAddress:', $exec);
+    array_splice($mac_arr, 0, 1);
+
+    //print_r($mac_arr);
+    //echo "<br><br>SQL code:<br>";
+    $sqlWhere = "SELECT DISTINCT `clients`.`client_id` FROM `clients` 
+            LEFT JOIN `clients_network` ON `clients`.`client_id` = `clients_network`.`client_id` 
+            WHERE `clients_network`.`mac` LIKE '%";
+    for ($j = 0; $j < count($mac_arr); $j++) {
+        $sqlWhere .= $mac_arr[$j] . "%' ";
+        if ($j < count($mac_arr) - 1) {
+            $sqlWhere .= "OR `clients_network`.`mac` LIKE '%";
+        }
+    }
+    //echo $sqlWhere;
+    //echo "<hr>";
+
+    $is_null = true;
+    $stmt = $pdo->prepare($sqlWhere);
+    $stmt->execute();
+    foreach ($stmt as $row) {
+        $is_null = false;
+        break;
+    }
+
+    if ($is_null) {
+        //Add to Clients DB
+        $stmt = $pdo->prepare("INSERT INTO `clients` (`client_id`, `name`) VALUES (NULL, ?);");
+        $stmt->execute([$ad_clients[$i]]);
+
+        //Get new ID
+        $stmt = $pdo->prepare("SELECT `client_id` as `c` FROM `clients` ORDER BY `client_id` DESC LIMIT 1;");
+        $stmt->execute();
+        foreach ($stmt as $row) {
+            $new_id = $row['c'];
+        }
+
+        //Add new Status row
+        $stmt = $pdo->prepare("INSERT INTO `clients_status` (`status_id`, `client_id`) VALUES (NULL, ?);");
+        $stmt->execute([$new_id]);
+
+        //Get IP Address
+        $exec = shell_exec('powershell -command "Get-CimInstance -ClassName Win32_NetworkAdapterConfiguration -ComputerName ' . $ad_clients[$i] . ' | where {$_.MACAddress -ne $null } | Format-List IPAddress"' . " 2>&1");
+        $exec = preg_replace('/\s+/', '', $exec);
+        $exec = str_replace(array('{', '}'), '', $exec); 
+        $ip_arr = explode('IPAddress:', $exec); 
+        array_splice($ip_arr, 0, 1);
+        for ($i = 0; $i < count($ip_arr); $i++) {
+            if (empty($ip_arr[$i])) {
+                $ip_arr[$i] = "N/A";
+            }
+        }
+
+        ////Add MAC Address
+        // for ($j = 0; $j < count($mac_arr); $j++) {
+        //     $stmt = $pdo->prepare("INSERT INTO `clients_network` (`network_id`, `client_id`, `mac`) VALUES (NULL, ?, ?);");
+        //     $stmt->execute([$new_id, $mac_arr[$j]]);
+        // }
+
+        //Add Networks
+        for ($i = 0; $i < count($mac_arr); $i++) {
+            if (str_contains($ip_arr[$i], ',')) {
+                $temp_ip = explode(',', $ip_arr[$i]);
+                for ($j = 0; $j < count($temp_ip); $j++) {
+                    $stmt3 = $pdo->prepare("INSERT INTO `clients_network` (`network_id`, `client_id`, `ip`, `mac`) VALUES (NULL, ?, ?, ?)");
+                    $stmt3->execute([$new_id, $temp_ip[$j], $mac_arr[$i]]);
+                }
+            } else {
+                $stmt3 = $pdo->prepare("INSERT INTO `clients_network` (`network_id`, `client_id`, `ip`, `mac`) VALUES (NULL, ?, ?, ?)");
+                $stmt3->execute([$new_id, $ip_arr[$i], $mac_arr[$i]]);
+            }
+        }
+        echo "<span style=\"color:green;\">Added to DB.</span>";
+        $refresh_btn = true;
+    } else {
+        echo "<span style=\"color:red;\">Client is in DB.</span>";
+    }
+    echo "<br>";
+}
+
+if ($refresh_btn){
+    echo "<br>New clients have been added. You need to refresh the page.<br>";
+    echo "<button class=\"btn btn-primary w-100\" onclick=\"window.location.reload();\">Refresh page</button>";
 }
