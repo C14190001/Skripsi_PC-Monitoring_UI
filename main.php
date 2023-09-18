@@ -238,11 +238,13 @@ try {
         </button>
         <div class="collapse navbar-collapse" id="topnav_menu">
             <div class="navbar-nav mr-auto">
-                <button class="btn btn-primary mr-2 mt-1" onclick="$('#sd_modal').modal({backdrop: 'static',keyboard: false});$('#sd_modal').modal('show');">Scan Devices</button>
-                <button class="btn btn-primary mr-2 mt-1" href="#">Download .CSV</button>
+                <!--Left menu button-->
+
             </div>
             <div class="navbar-nav ml-auto">
-                <button class="btn btn-primary mr-2 mt-1" onclick="">(Dummy button)</button>
+                <!--Right menu button-->
+                <button class="btn btn-primary mr-2 mt-1" onclick="$('#sd_modal').modal({backdrop: 'static',keyboard: false});$('#sd_modal').modal('show');">Scan Devices</button>
+                <button class="btn btn-primary mr-2 mt-1" href="#">Download .CSV</button>
             </div>
         </div>
 
@@ -268,8 +270,8 @@ try {
                     <div class="container">
                     <img src=\'icons\pc-display.svg\' alt=\'PC\' style=\'width:40px; float:right;\'>
                         <div class="row">
-                            <div class="col-1"><span id=\'conn_stat' . $i . '\'></span></div>
-                            <div class="col" style="text-align: left;"><b>' . $row['name'] . '</b></div>
+                            <div class="col-1" id=\'conn_stat' . $i . '\' style="text-align: center;"></div>
+                            <div class="col" style="display: flex; justify-content: center; flex-direction: column; align-items: flex-start;"><b>' . $row['name'] . '</b></div>
                         </div>
                         <div class="row">
                             <div class="col" style="vertical-align: top; text-align: left;">';

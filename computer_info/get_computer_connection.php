@@ -25,9 +25,9 @@ foreach($output as $a){
 
 $stmt = $pdo->prepare("UPDATE `clients_status` SET `connection_status` = ? WHERE `client_id` = ?");
 if ($result == 0) {
-    echo "<span style=\"color:green;font-size: 20px;\">⦿</span>";
+    echo "<span style=\"color:green;font-size: 24px;display: flex; justify-content: center;\">⦿</span>";
     $stmt->execute([1, $id]);
 } else {
-    echo "<span style=\"color:red;font-size: 20px;\">⦿</span>";
+    echo "<span style=\"color:green;font-size: 24px;display: flex; justify-content: center;\">⦿</span>";
     $stmt->execute([0, $id]);
 }
