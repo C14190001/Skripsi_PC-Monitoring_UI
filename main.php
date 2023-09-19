@@ -286,7 +286,7 @@ try {
                 <div class="container">
                     <div class="row mt-3">
                         <h4 class="col-8">Clients</h4>
-                        <button class="btn btn-primary col" onclick="refresh_clients_list()" style="float: right;">Refresh</button>
+                        <button class="btn btn-outline-primary col" onclick="refresh_clients_list()" style="float: right;">Refresh</button>
                     </div>
                 </div>
                 <hr>
@@ -342,10 +342,10 @@ try {
                                     <h6>Options:</h6>
                                     <!-- Radio button: Download only + Update then download !-->
                                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                        <label class="btn btn-secondary active">
+                                        <label class="btn btn-outline-secondary active">
                                             <input type="radio" name="dl_csv_op" id="radio_download_only" checked> Download only
                                         </label>
-                                        <label class="btn btn-secondary">
+                                        <label class="btn btn-outline-secondary">
                                             <input type="radio" name="dl_csv_op" id="radio_update_download"> Update + Download
                                         </label>
                                     </div>
