@@ -12,13 +12,9 @@ try {
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
-//Sebelum ambil data: Update all clients (status_only)
-//Karena ada cpu/ram/mem usage
-
 $stmt = $pdo->prepare("
-SELECT `clients`.`client_id`, `name`, `os`, `cpu`, `i_gpu`, `e_gpu`, `ram`, `mem`, GROUP_CONCAT(`ip` SEPARATOR ', ') AS `ip`, GROUP_CONCAT(`mac` SEPARATOR ', ') AS `mac`, GROUP_CONCAT(`app` SEPARATOR ', ') AS `app`, `cpu_usage`, `ram_usage`, `mem_usage`, `last_bootup`, `connection_status` 
+SELECT `clients`.`client_id`, `name`, `os`, `cpu`, `i_gpu`, `e_gpu`, `ram`, `mem`, GROUP_CONCAT(`ip` SEPARATOR '|') AS `ip`, GROUP_CONCAT(`mac` SEPARATOR '|') AS `mac`, GROUP_CONCAT(`app` SEPARATOR '|') AS `app`
 FROM `clients` 
-LEFT JOIN `clients_status` ON `clients`.`client_id` = `clients_status`.`client_id` 
 LEFT JOIN `clients_network` ON `clients`.`client_id` = `clients_network`.`client_id`
 LEFT JOIN `clients_app` ON `clients`.`client_id` = `clients_app`.`client_id`
 GROUP BY `client_id`
@@ -28,11 +24,13 @@ $stmt->execute();
 $delimiter = ",";
 $filename = "clients_" . date('Y-m-d H:i:s') . ".csv";
 $f = fopen('php://memory', 'w');
-$fields = array('client_id', 'name', 'os', 'cpu', 'i_gpu', 'e_gpu', 'ram', 'mem', 'ip', 'mac', 'app', 'cpu_usage', 'ram_usage', 'mem_usage', 'last_bootup', 'connection_status');
+//$fields = array('client_id', 'name', 'os', 'cpu', 'i_gpu', 'e_gpu', 'ram', 'mem', 'ip', 'mac', 'app', 'cpu_usage', 'ram_usage', 'mem_usage', 'last_bootup', 'connection_status');
+$fields = array('client_id', 'name', 'os', 'cpu', 'i_gpu', 'e_gpu', 'ram', 'mem', 'ip', 'mac', 'app');
 fputcsv($f, $fields, $delimiter);
 
 foreach ($stmt as $row) {
-    $lineData = array($row['client_id'], $row['name'], $row['os'], $row['cpu'], $row['i_gpu'], $row['e_gpu'], $row['ram'], $row['mem'], $row['ip'], $row['mac'], $row['app'], $row['cpu_usage'], $row['ram_usage'], $row['mem_usage'], $row['last_bootup'], $row['connection_status']);
+    //$lineData = array($row['client_id'], $row['name'], $row['os'], $row['cpu'], $row['i_gpu'], $row['e_gpu'], $row['ram'], $row['mem'], $row['ip'], $row['mac'], $row['app'], $row['cpu_usage'], $row['ram_usage'], $row['mem_usage'], $row['last_bootup'], $row['connection_status']);
+    $lineData = array($row['client_id'], $row['name'], $row['os'], $row['cpu'], $row['i_gpu'], $row['e_gpu'], $row['ram'], $row['mem'], $row['ip'], $row['mac'], $row['app']);
     fputcsv($f, $lineData, $delimiter);
 }
 

@@ -224,30 +224,40 @@ try {
         }
 
         function download_csv() {
-            //Dibuat modal (Radio: Download now / Update + Download, Button: Download)
-            var status_update = 0;
-            if (status_update == 0) {
+            if (document.getElementById('radio_download_only').checked) {
                 location.href = 'ajax/download_csv.php';
-            }
-            else{
-                //1. AJAX Update_all_status
-                //2. location.href = 'ajax/download_csv.php';
-            }
-        }
-
-        function update_all_client(){
-            //Dibuat modal (Radio: Status only / All, Button: Update)
-            var status_only = 0;
-            if (status_only == 0) {
-                //(Slow)
-                //AJAX update_all_status
-            }
-            else{
-                //(Very Slow!)
-                //AJAX update_all_info
+                $('#dcsv_modal').modal('hide');
+            } else if (document.getElementById('radio_update_download').checked) {
+                update_all_client(0, 1);
             }
         }
 
+        function update_all_client(is_button, download_csv) {
+            //is_button = 1, jika berasal dari tombol 'Update all client'.
+            if (is_button == 1) {
+                document.getElementById("btn_update_all").innerHTML = "Updating...";
+            }
+            //download_csv = 1, jika berasal dari tombol modal Download .csv
+            if (download_csv == 1) {
+                document.getElementById("btn_download_csv").innerHTML = "Updating...";
+            }
+            $.ajax({
+                type: "POST",
+                url: "ajax/update_all_info.php",
+                data: ({}),
+            }).done(function(msg) {
+                if (is_button == 1) {
+                    document.getElementById("btn_update_all").innerHTML = "Update all clients";
+                }
+                if (download_csv == 1) {
+                    location.href = 'ajax/download_csv.php';
+                    document.getElementById("btn_download_csv").innerHTML = "Download";
+                    $('#dcsv_modal').modal('hide');
+                }
+                //Refresh halaman
+                refresh_clients_list();
+            });
+        }
     </script>
 </head>
 
@@ -264,8 +274,8 @@ try {
             <div class="navbar-nav ml-auto">
                 <!--Right menu button-->
                 <button class="btn btn-primary mr-2 mt-1" onclick="$('#sd_modal').modal({backdrop: 'static',keyboard: false});$('#sd_modal').modal('show');">Scan devices</button>
-                <button class="btn btn-primary mr-2 mt-1" onclick="update_all_client()" id="btn_update_all">Update all client</button>
-                <button class="btn btn-primary mr-2 mt-1" onclick="download_csv()">Download .csv</button>
+                <button class="btn btn-primary mr-2 mt-1" onclick="update_all_client(1,0)" id="btn_update_all">Update all clients</button>
+                <button class="btn btn-success mr-2 mt-1" onclick="$('#dcsv_modal').modal({backdrop: 'static',keyboard: false});$('#dcsv_modal').modal('show');">Download .csv</button>
             </div>
         </div>
 
@@ -320,6 +330,37 @@ try {
                 ?>
             </div>
             <div class="col-9" style="text-align: justify; height: 90vh; overflow-y: scroll;">
+                <!--Modal Download .csv-->
+                <div class="modal fade" id="dcsv_modal">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Download .csv</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    <h6>Options:</h6>
+                                    <!-- Radio button: Download only + Update then download !-->
+                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                        <label class="btn btn-secondary active">
+                                            <input type="radio" name="dl_csv_op" id="radio_download_only" checked> Download only
+                                        </label>
+                                        <label class="btn btn-secondary">
+                                            <input type="radio" name="dl_csv_op" id="radio_update_download"> Update + Download
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" id="btn_download_csv" onclick="download_csv()">Download</button>
+                                <!-- Onclick: Matikan radio button -->
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
                 <!--Modal Scan Devices-->
                 <div class="modal fade" id="sd_modal">
                     <div class="modal-dialog modal-dialog-centered">
@@ -344,7 +385,7 @@ try {
                                 </div>
                             </div>
                             <div class="modal-footer" id="sd_modal_footer">
-                                <button type="button" class="btn btn-primary" onclick="document.getElementById('sd_dn_input').value=''; document.getElementById('sd_results').innerHTML=''" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-danger" onclick="document.getElementById('sd_dn_input').value=''; document.getElementById('sd_results').innerHTML=''" data-dismiss="modal">Close</button>
                             </div>
 
                         </div>
@@ -360,7 +401,7 @@ try {
                             </div>
                             <div class="modal-body" id="info_modal_body"></div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                             </div>
 
                         </div>
