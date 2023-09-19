@@ -11,8 +11,7 @@ try {
 } catch (\PDOException $e) {
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
-$id = $_POST['id'];
-$stmt = $pdo->prepare("SELECT * FROM `clients` WHERE `client_id` = " . $id);
+$stmt = $pdo->prepare("SELECT * FROM `clients`");
 $stmt->execute();
 foreach ($stmt as $row) {
     $target = $row['name'];
@@ -30,15 +29,11 @@ foreach ($stmt as $row) {
 
     if ($result == 0) {
         //Connected
-        echo "Connection status: <span style=\"color:green\">Connected</span><br>";
         $stmt->execute([1, $id]);
     } else {
         //Disconnected
-        echo "Connection status: <span style=\"color:red\">Disconnected</span><br>";
         $stmt->execute([0, $id]);
     }
-
-
 
     if ($result == 0) {
         //CPU Usage
@@ -60,7 +55,6 @@ foreach ($stmt as $row) {
         $total = $total / $n_core;
         $stmt2 = $pdo->prepare("UPDATE `clients_status` SET `cpu_usage` = ? WHERE `client_id` = ?");
         $stmt2->execute([round($total, 2), $id]);
-        echo "CPU Usage: " . round($total, 2) . "%<br>";
 
         //RAM Usage
         //$ram_cap = round(str_replace("TotalVisibleMemorySize : ", "", shell_exec('powershell -command "Get-CimInstance -ClassName Win32_OperatingSystem -ComputerName ' . $target . ' | Format-List TotalVisibleMemorySize"' . " 2>&1")) / 1000000, 2);
@@ -77,8 +71,6 @@ foreach ($stmt as $row) {
         $ram_usage_per = round(($ram_usage / $ram_cap) * 100, 2);
         $stmt3 = $pdo->prepare("UPDATE `clients_status` SET `ram_usage` = ? WHERE `client_id` = ?");
         $stmt3->execute([$ram_usage, $id]);
-        echo "RAM Usage: " . $ram_usage . " GB (" . $ram_usage_per . "%)<br>";
-
 
         //MEM Usage
         //$hdd_cap = round(str_replace("Size : ", "", shell_exec('powershell -command "Get-CimInstance -ClassName Win32_LogicalDisk  -ComputerName ' . $target . ' | Format-List Size"' . " 2>&1")) / 1073741824, 2);
@@ -95,8 +87,6 @@ foreach ($stmt as $row) {
         $hdd_usage_per = round(($hdd_usage / $hdd_cap) * 100, 2);
         $stmt3 = $pdo->prepare("UPDATE `clients_status` SET `mem_usage` = ? WHERE `client_id` = ?");
         $stmt3->execute([$hdd_usage, $id]);
-        echo "Memory Usage: " . $hdd_usage . " GB (" . $hdd_usage_per . "%)<br>";
-
 
         //Uptime
         $last_bootup_time = str_replace("LastBootUpTime : ", "", shell_exec('powershell -command "Get-CimInstance -ClassName Win32_OperatingSystem -ComputerName ' . $target . ' | Format-List LastBootUpTime"' . " 2>&1"));
@@ -106,30 +96,6 @@ foreach ($stmt as $row) {
 
         $stmt3 = $pdo->prepare("UPDATE `clients_status` SET `last_bootup` = ? WHERE `client_id` = ?");
         $stmt3->execute([$last_bootup_time, $id]);
-
-        $get_current_time = strtotime(shell_exec('powershell -command "Invoke-Command -ComputerName ' . $target . ' -ScriptBlock {get-date}"' . " 2>&1"));
-        //echo "Uptime: " . ($get_current_time - $get_uptime) . " Seconds";
-        echo "Uptime: ";
-        $uptime_secs = $get_current_time - $get_uptime;
-        $t_m = 0;
-        $t_h = 0;
-        $t_d = 0;
-        while ($uptime_secs >= 60) {
-            $t_m++;
-            $uptime_secs -= 60;
-        }
-        while ($t_m >= 60) {
-            $t_h++;
-            $t_m -= 60;
-        }
-        while ($t_h >= 24) {
-            $t_d++;
-            $t_h -= 24;
-        }
-        echo $t_d, " Days ";
-        echo $t_h, " Hours ";
-        echo $t_m, " Minutes ";
-        echo $uptime_secs, " Seconds ";
     } else {
         $stmt2 = $pdo->prepare("UPDATE `clients_status` SET `cpu_usage` = ? WHERE `client_id` = ?");
         $stmt2->execute([0, $id]);
@@ -138,6 +104,6 @@ foreach ($stmt as $row) {
         $stmt3 = $pdo->prepare("UPDATE `clients_status` SET `mem_usage` = ? WHERE `client_id` = ?");
         $stmt3->execute([0, $id]);
         $stmt3 = $pdo->prepare("UPDATE `clients_status` SET `last_bootup` = ? WHERE `client_id` = ?");
-        $stmt3->execute(["N/A", $id]);
+        $stmt3->execute([0, $id]);
     }
 }

@@ -17,7 +17,7 @@ $id = $_POST['id'];
 exec("ping -n 1 " . $target, $output, $result);
 
 foreach($output as $a){
-    if(str_contains($a,"Destination host unreachable")){
+    if(str_contains($a,"Destination host unreachable")||str_contains($a,"Request timed out")){
         $result = 1; //Disconnected
         break;
     }
@@ -25,9 +25,11 @@ foreach($output as $a){
 
 $stmt = $pdo->prepare("UPDATE `clients_status` SET `connection_status` = ? WHERE `client_id` = ?");
 if ($result == 0) {
+    //Connected
     echo "<span style=\"color:green;font-size: 24px;display: flex; justify-content: center;\">⦿</span>";
     $stmt->execute([1, $id]);
 } else {
-    echo "<span style=\"color:green;font-size: 24px;display: flex; justify-content: center;\">⦿</span>";
+    //Disconnected
+    echo "<span style=\"color:red;font-size: 24px;display: flex; justify-content: center;\">⦿</span>";
     $stmt->execute([0, $id]);
 }

@@ -210,7 +210,6 @@ try {
             if (document.getElementById("sd_dn_input").value == "") {
                 alert("Please enter Distinguished Name");
             } else {
-                console.log(document.getElementById("sd_dn_input").value);
                 document.getElementById("sd_results").innerHTML = "Searching for Computers...";
                 $.ajax({
                     type: "POST",
@@ -224,9 +223,31 @@ try {
             }
         }
 
-        //[Function yg belum]
-        //(Optional) update_all_client(): taruh di navbar, update semua informasi semua client, munculin modal "this might take a while", setelah selesai munculin modal "Done" dengan button Close
-        //Download_csv(): jika ada yang Null, ambil data + simpan DB.
+        function download_csv() {
+            //Dibuat modal (Radio: Download now / Update + Download, Button: Download)
+            var status_update = 0;
+            if (status_update == 0) {
+                location.href = 'ajax/download_csv.php';
+            }
+            else{
+                //1. AJAX Update_all_status
+                //2. location.href = 'ajax/download_csv.php';
+            }
+        }
+
+        function update_all_client(){
+            //Dibuat modal (Radio: Status only / All, Button: Update)
+            var status_only = 0;
+            if (status_only == 0) {
+                //(Slow)
+                //AJAX update_all_status
+            }
+            else{
+                //(Very Slow!)
+                //AJAX update_all_info
+            }
+        }
+
     </script>
 </head>
 
@@ -239,12 +260,12 @@ try {
         <div class="collapse navbar-collapse" id="topnav_menu">
             <div class="navbar-nav mr-auto">
                 <!--Left menu button-->
-
             </div>
             <div class="navbar-nav ml-auto">
                 <!--Right menu button-->
-                <button class="btn btn-primary mr-2 mt-1" onclick="$('#sd_modal').modal({backdrop: 'static',keyboard: false});$('#sd_modal').modal('show');">Scan Devices</button>
-                <button class="btn btn-primary mr-2 mt-1" href="#">Download .CSV</button>
+                <button class="btn btn-primary mr-2 mt-1" onclick="$('#sd_modal').modal({backdrop: 'static',keyboard: false});$('#sd_modal').modal('show');">Scan devices</button>
+                <button class="btn btn-primary mr-2 mt-1" onclick="update_all_client()" id="btn_update_all">Update all client</button>
+                <button class="btn btn-primary mr-2 mt-1" onclick="download_csv()">Download .csv</button>
             </div>
         </div>
 
@@ -304,7 +325,7 @@ try {
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Scan Devices</h4>
+                                <h4 class="modal-title">Scan devices</h4>
                             </div>
                             <div class="modal-body" id="sd_modal_body">
                                 <div class="container-fluid">
