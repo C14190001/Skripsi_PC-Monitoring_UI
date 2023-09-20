@@ -1,7 +1,6 @@
 <?php
 $target = $_POST['target'];
 exec('powershell -command "Invoke-Command -ComputerName "' . $target . '" -ScriptBlock { netstat -an | findstr "LISTENING"; }" 2>&1', $output);
-
 $open_ports = [];
 foreach ($output as $port) {
     $s1 = str_replace(array("::", "[", "]"), array(""), $port);
@@ -14,9 +13,6 @@ foreach ($output as $port) {
 }
 sort($open_ports);
 
-//print_r($open_ports);
-
-//echo $target . "'s open ports:\n";
 for ($i = 0; $i < count($open_ports); $i++) {
     echo $open_ports[$i];
     if($i < count($open_ports) - 1){

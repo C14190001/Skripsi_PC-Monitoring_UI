@@ -11,8 +11,6 @@ foreach ($stmt as $row) {
 
     //CONN Status
     exec("ping -n 1 " . $target, $output, $result);
-    $stmt = $pdo->prepare("UPDATE `clients_status` SET `connection_status` = ? WHERE `client_id` = ?");
-
     foreach ($output as $a) {
         if (str_contains($a, "Destination host unreachable") || str_contains($a, "Request timed out")) {
             $result = 1; //Disconnected
@@ -22,7 +20,7 @@ foreach ($stmt as $row) {
 
     if ($result == 0) {
         //Connected
-        echo "Connection status: <span style=\"color:green\">Connected</span><br>";
+        //echo "Connection status: <span style=\"color:green\">Connected</span><br>";
         echo "CPU Usage: " . getCpuUsage($target, $id) . "%<br>";
         $ramUsage = getRam($target, $result, $id, 1);
         echo "RAM Usage: " . $ramUsage[1] . " GB (" . $ramUsage[2]  . "%)<br>";
@@ -31,7 +29,7 @@ foreach ($stmt as $row) {
         $uptime = getUptime($target, $result, $id, 2);
         echo "Uptime: ",  $uptime[0], " Days ", $uptime[1], " Hours ", $uptime[2], " Minutes ", $uptime[3], " Seconds";
     } else {
-        echo "Connection status: <span style=\"color:red\">Disconnected</span><br>";
+        //echo "Connection status: <span style=\"color:red\">Disconnected</span><br>";
         $stmt2 = $pdo->prepare("UPDATE `clients_status` SET `cpu_usage` = ? WHERE `client_id` = ?");
         $stmt2->execute([0, $id]);
         $stmt3 = $pdo->prepare("UPDATE `clients_status` SET `ram_usage` = ? WHERE `client_id` = ?");

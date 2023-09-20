@@ -12,32 +12,42 @@ foreach ($stmt as $row) {
     //Status (Selalu diupdate)
     //Cek koneksi
     $conn_status = getConnection($row['name'], $id);
-    echo "<span id='status'></span>";
+    $conn_str = "";
+    if ($conn_status == 0) {
+        $conn_str = "Connection status: <span style=\"color:green\">Connected</span><br>";
+    } else {
+        $conn_str = "Connection status: <span style=\"color:red\">Disconnected</span><br>";
+    }
+    echo "<span>" . $conn_str . "</span>";
+    echo "<span id='status'>" . $conn_str . "</span>";
 
     //Commands
-    echo '
-    <br><br>
-    <div class="container">
-    <div class="row justify-content-center">
-            <button class="btn btn-danger col-5 mb-2" id="shutdown_btn" onclick="shutdown_computer(\'' . $row['name'] . '\', \'false\')">Shutdown</button>
-            <div class="col-1"></div>
-            <button class="btn btn-warning col-5 mb-2" id="restart_btn" onclick="shutdown_computer(\'' . $row['name'] . '\', \'true\')">Restart</button>
-    </div>
-    <div class="row justify-content-center">
-            <button class="btn btn-primary col-5 mb-2"id="ping" onclick="ping_computer(\'' . $row['name'] . '\',\'ping\')">Ping</button>
-            <div class="col-1"></div>
-            <button class="btn btn-primary col-5 mb-2"id="open_port" onclick="get_open_ports(\'' . $row['name'] . '\',\'open_port\')">Open ports</button>
-    </div>
-    <div class="row justify-content-center">
-            <input id="tracert_input" class="col-7 mb-2" type="text" placeholder="Trace route destination">
-            <div class="col-1"></div>
-            <button class="btn btn-primary col-3 mb-2" id="tracert_btn" onclick="trace_route(\'' . $row['name'] . '\',\'tracert_input\',\'tracert_btn\')">Trace route</button>
-    </div>
-    <div class="row justify-content-center">
-    <button class="btn btn-success col-11 mb-2"id="update_btn" onclick="update_client(\'' . $row['name'] . '\',\'' . $id . '\')">Update all info</button>
-    </div
-    </div>
-    <hr>';
+    if ($conn_status == 0) {
+        echo '
+        <br><br>
+        <div class="container">
+        <div class="row justify-content-center">
+                <button class="btn btn-danger col-5 mb-2" id="shutdown_btn" onclick="shutdown_computer(\'' . $row['name'] . '\', \'false\')">Shutdown</button>
+                <div class="col-1"></div>
+               <button class="btn btn-warning col-5 mb-2" id="restart_btn" onclick="shutdown_computer(\'' . $row['name'] . '\', \'true\')">Restart</button>
+        </div>
+        <div class="row justify-content-center">
+                <button class="btn btn-primary col-5 mb-2"id="ping" onclick="ping_computer(\'' . $row['name'] . '\',\'ping\')">Ping</button>
+                <div class="col-1"></div>
+                <button class="btn btn-primary col-5 mb-2"id="open_port" onclick="get_open_ports(\'' . $row['name'] . '\',\'open_port\')">Open ports</button>
+        </div>
+        <div class="row justify-content-center">
+                <input id="tracert_input" class="col-7 mb-2" type="text" placeholder="Trace route destination">
+                <div class="col-1"></div>
+                <button class="btn btn-primary col-3 mb-2" id="tracert_btn" onclick="trace_route(\'' . $row['name'] . '\',\'tracert_input\',\'tracert_btn\')">Trace route</button>
+        </div>
+        <div class="row justify-content-center">
+        <button class="btn btn-success col-11 mb-2"id="update_btn" onclick="update_client(\'' . $row['name'] . '\',\'' . $id . '\')">Update all info</button>
+        </div
+        </div>';
+    }
+
+    echo "<hr>";
 
     //PC Info
     //OS
