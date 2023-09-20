@@ -51,7 +51,9 @@ foreach ($stmt as $row) {
 
     //PC Info
     //OS
-    echo "<button class=\"btn btn-secondary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'os', 'os')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
+    if ($conn_status == 0) {
+        echo "<button class=\"btn btn-secondary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'os', 'os')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
+    }
     if (is_null($row['os'])) {
         echo 'OS: <span id="os">' . getOs($row['name'], $conn_status, $id) . '</span><br>';
     } else {
@@ -59,7 +61,9 @@ foreach ($stmt as $row) {
     }
 
     //CPU
-    echo "<button class=\"btn btn-secondary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'cpu', 'cpu')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
+    if ($conn_status == 0) {
+        echo "<button class=\"btn btn-secondary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'cpu', 'cpu')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
+    }
     if (is_null($row['cpu'])) {
         echo 'CPU: <span id="cpu">' . getCpu($row['name'], $conn_status, $id) . '</span><br>';
     } else {
@@ -67,7 +71,9 @@ foreach ($stmt as $row) {
     }
 
     //GPU
-    echo "<button class=\"btn btn-secondary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'gpu', 'gpu')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
+    if ($conn_status == 0) {
+        echo "<button class=\"btn btn-secondary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'gpu', 'gpu')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
+    }
     if (is_null($row['i_gpu']) && is_null($row['e_gpu'])) {
         $gpus = getGpu($row['name'], $conn_status, $id);
         echo '<span id="gpu">iGPU: ' . $gpus[0] . '. eGPU: ' . $gpus[1]  . '</span><br>';
@@ -76,7 +82,9 @@ foreach ($stmt as $row) {
     }
 
     //RAM
-    echo "<button class=\"btn btn-secondary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'ram', 'ram')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
+    if ($conn_status == 0) {
+        echo "<button class=\"btn btn-secondary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'ram', 'ram')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
+    }
     if ($row['ram'] == "0") {
         echo 'RAM: <span id="ram">' . getRam($row['name'], $conn_status, $id, 0)[0] . ' GB</span><br>';
     } else {
@@ -84,7 +92,9 @@ foreach ($stmt as $row) {
     }
 
     //MEM
-    echo "<button class=\"btn btn-secondary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'mem', 'mem')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
+    if ($conn_status == 0) {
+        echo "<button class=\"btn btn-secondary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'mem', 'mem')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
+    }
     if ($row['mem'] == "0") {
         echo 'Memory: <span id="mem">' . getHdd($row['name'], $conn_status, $id, 0)[0] . ' GB</span><br>';
     } else {
@@ -92,7 +102,9 @@ foreach ($stmt as $row) {
     }
 
     //NET
-    echo "<button class=\"btn btn-secondary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'net', 'net')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
+    if ($conn_status == 0) {
+        echo "<button class=\"btn btn-secondary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'net', 'net')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
+    }
     echo 'Network: <ul id="net">';
     $is_null = true;
     $stmt2 = $pdo->prepare("SELECT * FROM `clients_network` WHERE `client_id` = " . $id);
@@ -118,7 +130,9 @@ foreach ($stmt as $row) {
     echo "</ul>";
 
     //APP
-    echo "<button class=\"btn btn-secondary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'apps', 'app')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
+    if ($conn_status == 0) {
+        echo "<button class=\"btn btn-secondary mr-2 mb-1\" onclick=\"get_computer_info('" . $row['name'] . "','" . $id . "', 'apps', 'app')\"><img src=\"icons\arrow-clockwise.svg\" alt=\"Update\"></button>";
+    }
     echo 'Apps: <ul id="app">';
     $is_null = true;
     $stmt2 = $pdo->prepare("SELECT * FROM `clients_app` WHERE `client_id` = " . $id);
