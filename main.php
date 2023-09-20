@@ -48,10 +48,11 @@ try {
             document.getElementById($output).innerHTML = "...";
             $.ajax({
                 type: "POST",
-                url: "computer_info/get_computer_" + $info + ".php",
+                url: "ajax/client_info.php",
                 data: ({
                     target: $client,
                     id: $id,
+                    info: $info,
                 }),
             }).done(function(msg) {
                 document.getElementById($output).innerHTML = msg;
@@ -143,20 +144,6 @@ try {
             window.location.reload();
         }
 
-        function check_computer_connection($client, $client_id, $output) {
-            document.getElementById($output).innerHTML = "";
-            $.ajax({
-                type: "POST",
-                url: "computer_info/get_computer_connection.php",
-                data: ({
-                    target: $client,
-                    id: $client_id,
-                }),
-            }).done(function(msg) {
-                document.getElementById($output).innerHTML = msg;
-            });
-        }
-
         function show_info_modal($title, $body) {
             document.getElementById("info_modal_title").innerHTML = $title;
             document.getElementById("info_modal_body").innerHTML = $body;
@@ -167,13 +154,14 @@ try {
             $('#info_modal').modal('show');
         }
 
-        function get_client_status($client_id) {
+        function get_client_status($client_id, $conn) {
             document.getElementById("status").innerHTML = "Getting status...";
             $.ajax({
                 type: "POST",
                 url: "ajax/get_client_status.php",
                 data: ({
                     id: $client_id,
+                    conn: $conn
                 }),
             }).done(function(msg) {
                 document.getElementById("status").innerHTML = msg;
@@ -186,8 +174,8 @@ try {
             get_computer_info($client_name, $id, 'cpu', 'cpu');
             get_computer_info($client_name, $id, 'gpu', 'gpu');
             get_computer_info($client_name, $id, 'ram', 'ram');
-            get_computer_info($client_name, $id, 'hdd', 'mem');
-            get_computer_info($client_name, $id, 'ipMac', 'net');
+            get_computer_info($client_name, $id, 'mem', 'mem');
+            get_computer_info($client_name, $id, 'net', 'net');
             get_computer_info($client_name, $id, 'apps', 'app')
             get_client_status($id);
             sleep(2000).then(() => {
@@ -307,7 +295,7 @@ try {
                         <div class="row">
                             <div class="col" style="vertical-align: top; text-align: left;">';
                     //IP Address
-                    echo '<script>check_computer_connection(\'' . $row['name'] . '\',\'' . $row['client_id'] . '\',\'conn_stat' . $i . '\')</script>';
+                    echo '<script>get_computer_info(\'' . $row['name'] . '\',\'' . $row['client_id'] . '\',\'conn\',\'conn_stat' . $i . '\')</script>';
                     $stmt2 = $pdo->prepare("SELECT ip from clients_network WHERE client_id = " . $row['client_id']);
                     $stmt2->execute();
                     $c = 0;
