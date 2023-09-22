@@ -5,4 +5,4 @@ $db_user = 'monitor_user';
 $db_pass = '';
 $ldap_host = 'LDAP://192.168.56.103';
 $ldap_user = 'Administrator@myserver.com';
-$ldap_pass = 'abcd1234.';
+$ldap_pass = 'k693qDk5';

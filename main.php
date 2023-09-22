@@ -246,6 +246,30 @@ try {
                 refresh_clients_list();
             });
         }
+
+        function delete_client(client_id) {
+            document.getElementById("dc_delete_btn").innerHTML = "Removing...";
+            $.ajax({
+                type: "POST",
+                url: "ajax/delete_client.php",
+                data: ({
+                    id: client_id,
+                }),
+            }).done(function(msg) {
+                refresh_clients_list();
+            });
+        }
+
+        function delete_client_modal(client_id, client_name){
+            document.getElementById("dc_modal_body").innerHTML = "Are you sure want to remove " + client_name + "?";
+            document.getElementById("dc_modal_footer").innerHTML = '<button type="button" class="btn btn-danger" id="dc_delete_btn" onclick="delete_client(\''+ client_id +'\')">Yes</button>';
+            document.getElementById("dc_modal_footer").innerHTML += '<button type="button" class="btn btn-success" data-dismiss="modal">No</button>';
+            $('#dc_modal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+            $('#dc_modal').modal('show');
+        }
     </script>
 </head>
 
@@ -392,6 +416,19 @@ try {
                                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                             </div>
 
+                        </div>
+                    </div>
+                </div>
+
+                <!--Modal Delete client-->
+                <div class="modal fade" id="dc_modal">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="dc_modal_title">Remove client</h4>
+                            </div>
+                            <div class="modal-body" id="dc_modal_body"></div>
+                            <div class="modal-footer" id="dc_modal_footer"></div>
                         </div>
                     </div>
                 </div>

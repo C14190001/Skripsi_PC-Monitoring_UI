@@ -21,7 +21,7 @@ foreach ($stmt as $row) {
     if ($result == 0) {
         //Connected
         //echo "Connection status: <span style=\"color:green\">Connected</span><br>";
-        echo "CPU Usage: " . getCpuUsage($target, $id) . "%<br>";
+        echo "CPU Usage: " . getCpuUsage($target, $result, $id) . "%<br>";
         $ramUsage = getRam($target, $result, $id, 1);
         echo "RAM Usage: " . $ramUsage[1] . " GB (" . $ramUsage[2]  . "%)<br>";
         $hddUsage = getHdd($target, $result, $id, 1);
