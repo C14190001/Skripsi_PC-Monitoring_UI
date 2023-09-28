@@ -325,8 +325,8 @@ try {
                 const b = a.split(',');
                 document.getElementById("ua_modal_body").innerHTML = '<b>Updating all ' + (b.length / 2) + ' clients:</b><br>';
 
-                for (let i = 0; i < (b.length); i+=2) {
-                    updateAll_update(b[i],b[i+1]);
+                for (let i = 0; i < (b.length); i += 2) {
+                    updateAll_update(b[i], b[i + 1]);
                 }
             });
         }
@@ -362,6 +362,7 @@ try {
                 <button class="btn btn-primary mr-2 mt-1" onclick="$('#sd_modal').modal({backdrop: 'static',keyboard: false});$('#sd_modal').modal('show');">Scan devices</button>
                 <!-- <button class="btn btn-primary mr-2 mt-1" onclick="update_all_client(1,0)" id="btn_update_all">Update all clients</button> -->
                 <button class="btn btn-primary mr-2 mt-1" onclick="updateAll_find()" id="btn_update_all">Update all clients</button>
+                <button class="btn btn-primary mr-2 mt-1" onclick="$('#dapp_modal').modal({backdrop: 'static',keyboard: false});$('#dapp_modal').modal('show');">Deploy app</button>
                 <!-- <button class="btn btn-success mr-2 mt-1" onclick="$('#dcsv_modal').modal({backdrop: 'static',keyboard: false});$('#dcsv_modal').modal('show');">Download .csv</button> -->
                 <button class="btn btn-success mr-2 mt-1" onclick="download_csv();">Download .csv</button>
             </div>
@@ -527,6 +528,35 @@ try {
                     </div>
                 </div>
 
+                <!--Modal Deploy App-->
+                <div class="modal fade" id="dapp_modal">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="dapp_modal_title">Deploy app</h4>
+                            </div>
+                            <div class="modal-body" id="dapp_modal_body">
+                                <form form target="_blank" action="ajax/deployApp_upload.php" method="post" enctype="multipart/form-data">
+                                    <p>Select installer (.msi) to deploy (Max. 500 MB):</p>
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-9">
+                                                <input type="file" class="w-100 h-100" id="dapp_file_upload" name="installer_file" required>
+                                            </div>
+                                            <div class="col-3">
+                                                <button class="btn btn-success w-100 h-100" id="dapp_btn_upload" onclick="sleep(100).then(() => {document.getElementById('dapp_file_upload').value='';$('#dapp_modal').modal('hide');})" name="submit">Deploy</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" onclick="document.getElementById('dapp_file_upload').value='';$('#dapp_modal').modal('hide');" data-dismiss="modal">Close</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
                 <div id='client_detail'>Select client on the left for details.</div>
             </div>
         </div>
