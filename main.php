@@ -194,22 +194,22 @@ try {
             });
         }
 
-        function scan_devices_ad() {
-            if (document.getElementById("sd_dn_input").value == "") {
-                alert("Please enter Distinguished Name");
-            } else {
-                document.getElementById("sd_results").innerHTML = "Searching for Computers...";
-                $.ajax({
-                    type: "POST",
-                    url: "ajax/scan_devices_ad.php",
-                    data: ({
-                        dn_search: document.getElementById("sd_dn_input").value,
-                    }),
-                }).done(function(msg) {
-                    document.getElementById("sd_results").innerHTML = msg;
-                });
-            }
-        }
+        // function scan_devices_ad() {
+        //     if (document.getElementById("sd_dn_input").value == "") {
+        //         alert("Please enter Distinguished Name");
+        //     } else {
+        //         document.getElementById("sd_results").innerHTML = "Searching for Computers...";
+        //         $.ajax({
+        //             type: "POST",
+        //             url: "ajax/scan_devices_ad.php",
+        //             data: ({
+        //                 dn_search: document.getElementById("sd_dn_input").value,
+        //             }),
+        //         }).done(function(msg) {
+        //             document.getElementById("sd_results").innerHTML = msg;
+        //         });
+        //     }
+        // }
 
         function download_csv() {
             if (document.getElementById('radio_download_only').checked) {
@@ -220,32 +220,32 @@ try {
             }
         }
 
-        function update_all_client(is_button, download_csv) {
-            //is_button = 1, jika berasal dari tombol 'Update all client'.
-            if (is_button == 1) {
-                document.getElementById("btn_update_all").innerHTML = "Updating...";
-            }
-            //download_csv = 1, jika berasal dari tombol modal Download .csv
-            if (download_csv == 1) {
-                document.getElementById("btn_download_csv").innerHTML = "Updating...";
-            }
-            $.ajax({
-                type: "POST",
-                url: "ajax/update_all_info.php",
-                data: ({}),
-            }).done(function(msg) {
-                if (is_button == 1) {
-                    document.getElementById("btn_update_all").innerHTML = "Update all clients";
-                }
-                if (download_csv == 1) {
-                    location.href = 'ajax/download_csv.php';
-                    document.getElementById("btn_download_csv").innerHTML = "Download";
-                    $('#dcsv_modal').modal('hide');
-                }
-                //Refresh halaman
-                refresh_clients_list();
-            });
-        }
+        // function update_all_client(is_button, download_csv) {
+        //     //is_button = 1, jika berasal dari tombol 'Update all client'.
+        //     if (is_button == 1) {
+        //         document.getElementById("btn_update_all").innerHTML = "Updating...";
+        //     }
+        //     //download_csv = 1, jika berasal dari tombol modal Download .csv
+        //     if (download_csv == 1) {
+        //         document.getElementById("btn_download_csv").innerHTML = "Updating...";
+        //     }
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "ajax/update_all_info.php",
+        //         data: ({}),
+        //     }).done(function(msg) {
+        //         if (is_button == 1) {
+        //             document.getElementById("btn_update_all").innerHTML = "Update all clients";
+        //         }
+        //         if (download_csv == 1) {
+        //             location.href = 'ajax/download_csv.php';
+        //             document.getElementById("btn_download_csv").innerHTML = "Download";
+        //             $('#dcsv_modal').modal('hide');
+        //         }
+        //         //Refresh halaman
+        //         refresh_clients_list();
+        //     });
+        // }
 
         function delete_client(client_id) {
             document.getElementById("dc_delete_btn").innerHTML = "Removing...";
@@ -260,15 +260,89 @@ try {
             });
         }
 
-        function delete_client_modal(client_id, client_name){
+        function delete_client_modal(client_id, client_name) {
             document.getElementById("dc_modal_body").innerHTML = "Are you sure want to remove " + client_name + "?";
-            document.getElementById("dc_modal_footer").innerHTML = '<button type="button" class="btn btn-danger" id="dc_delete_btn" onclick="delete_client(\''+ client_id +'\')">Yes</button>';
+            document.getElementById("dc_modal_footer").innerHTML = '<button type="button" class="btn btn-danger" id="dc_delete_btn" onclick="delete_client(\'' + client_id + '\')">Yes</button>';
             document.getElementById("dc_modal_footer").innerHTML += '<button type="button" class="btn btn-success" data-dismiss="modal">No</button>';
             $('#dc_modal').modal({
                 backdrop: 'static',
                 keyboard: false
             });
             $('#dc_modal').modal('show');
+        }
+
+        function add_devices_scan() {
+            if (document.getElementById("sd_dn_input").value == "") {
+                alert("Please enter Distinguished Name");
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "ajax/add_devices_scan.php",
+                    data: ({
+                        dn_search: document.getElementById("sd_dn_input").value,
+                    }),
+                }).done(function(msg) {
+                    //Loop add_devices_add
+                    let a = msg;
+                    const b = a.split(',');
+                    document.getElementById("sd_results").innerHTML = '<b>Found ' + b.length + ' clients:</b><br>';
+
+                    for (let i = 0; i < b.length; i++) {
+                        add_devices_add(b[i]);
+                    }
+                });
+            }
+        }
+
+        function add_devices_add(device_name) {
+            document.getElementById("sd_results").innerHTML += 'Adding client ' + device_name + '...<br>';
+            $.ajax({
+                type: "POST",
+                url: "ajax/add_devices_add.php",
+                data: ({
+                    ad_client: device_name,
+                }),
+            }).done(function(msg) {
+                document.getElementById("sd_results").innerHTML += msg;
+            });
+        }
+
+        function updateAll_find() {
+            document.getElementById("ua_modal_body").innerHTML = "";
+            $('#ua_modal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+            $('#ua_modal').modal('show');
+
+            $.ajax({
+                type: "POST",
+                url: "ajax/updateAll_find.php",
+                data: ({}),
+            }).done(function(msg) {
+                //Loop updateAll_update
+                let a = msg;
+                const b = a.split(',');
+                document.getElementById("ua_modal_body").innerHTML = '<b>Updating all ' + (b.length / 2) + ' clients:</b><br>';
+
+                for (let i = 0; i < (b.length); i+=2) {
+                    updateAll_update(b[i],b[i+1]);
+                }
+            });
+        }
+
+        function updateAll_update(id, name) {
+            document.getElementById("ua_modal_body").innerHTML += 'Updating client ' + name + '...<br>';
+            $.ajax({
+                type: "POST",
+                url: "ajax/updateAll_update.php",
+                data: ({
+                    id: id,
+                    name: name,
+                }),
+            }).done(function(msg) {
+                document.getElementById("ua_modal_body").innerHTML += msg;
+            });
         }
     </script>
 </head>
@@ -286,8 +360,10 @@ try {
             <div class="navbar-nav ml-auto">
                 <!--Right menu button-->
                 <button class="btn btn-primary mr-2 mt-1" onclick="$('#sd_modal').modal({backdrop: 'static',keyboard: false});$('#sd_modal').modal('show');">Scan devices</button>
-                <button class="btn btn-primary mr-2 mt-1" onclick="update_all_client(1,0)" id="btn_update_all">Update all clients</button>
-                <button class="btn btn-success mr-2 mt-1" onclick="$('#dcsv_modal').modal({backdrop: 'static',keyboard: false});$('#dcsv_modal').modal('show');">Download .csv</button>
+                <!-- <button class="btn btn-primary mr-2 mt-1" onclick="update_all_client(1,0)" id="btn_update_all">Update all clients</button> -->
+                <button class="btn btn-primary mr-2 mt-1" onclick="updateAll_find()" id="btn_update_all">Update all clients</button>
+                <!-- <button class="btn btn-success mr-2 mt-1" onclick="$('#dcsv_modal').modal({backdrop: 'static',keyboard: false});$('#dcsv_modal').modal('show');">Download .csv</button> -->
+                <button class="btn btn-success mr-2 mt-1" onclick="download_csv();">Download .csv</button>
             </div>
         </div>
 
@@ -337,12 +413,12 @@ try {
                     $i++;
                 }
                 if ($is_null) {
-                    echo "There are no clients in DB.";
+                    echo "<span style=\"color:red;\">There are no clients in DB.</span>";
                 }
                 ?>
             </div>
             <div class="col-9" style="text-align: justify; height: 90vh; overflow-y: scroll;">
-                <!--Modal Download .csv-->
+                <!--(Tidak dipakai) Modal Download .csv-->
                 <div class="modal fade" id="dcsv_modal">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
@@ -387,7 +463,8 @@ try {
                                             <input id="sd_dn_input" class="w-100 h-100" type="text" placeholder="Distinguished Name">
                                         </div>
                                         <div class="col-3">
-                                            <button class="btn btn-primary w-100 h-100" id="sd_dn_search" onclick="scan_devices_ad()">Search</button>
+                                            <!-- <button class="btn btn-primary w-100 h-100" id="sd_dn_search" onclick="scan_devices_ad()">Search</button> -->
+                                            <button class="btn btn-primary w-100 h-100" id="sd_dn_search" onclick="add_devices_scan()">Search</button>
                                         </div>
                                     </div>
                                     <hr>
@@ -397,7 +474,8 @@ try {
                                 </div>
                             </div>
                             <div class="modal-footer" id="sd_modal_footer">
-                                <button type="button" class="btn btn-danger" onclick="document.getElementById('sd_dn_input').value=''; document.getElementById('sd_results').innerHTML=''" data-dismiss="modal">Close</button>
+                                <!-- <button type="button" class="btn btn-danger" onclick="document.getElementById('sd_dn_input').value=''; document.getElementById('sd_results').innerHTML='';" data-dismiss="modal">Close</button> -->
+                                <button type="button" class="btn btn-danger" onclick="document.getElementById('sd_dn_input').value=''; document.getElementById('sd_results').innerHTML=''; refresh_clients_list()" data-dismiss="modal">Close</button>
                             </div>
 
                         </div>
@@ -412,6 +490,22 @@ try {
                                 <h4 class="modal-title" id="info_modal_title"></h4>
                             </div>
                             <div class="modal-body" id="info_modal_body"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!--Modal Update All-->
+                <div class="modal fade" id="ua_modal">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="ua_modal_title">Update all clients</h4>
+                            </div>
+                            <div class="modal-body" id="ua_modal_body"></div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                             </div>
