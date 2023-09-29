@@ -43,28 +43,48 @@
     $fileType = strtolower(pathinfo($dir, PATHINFO_EXTENSION));
     $install_ok = false;
 
+    function addText($text)
+    {
+        echo "<script>document.getElementById(\"info_modal_body\").innerHTML += \"" . $text . "<br>\"</script>";
+    }
+
     if (isset($_POST["submit"])) {
         if ($fileType == "msi") {
             if (!file_exists($dir)) {
                 if (move_uploaded_file($_FILES["installer_file"]["tmp_name"], $dir)) {
-                    echo "<script>show_info_modal(\"Deploy app\", \"The file " . htmlspecialchars(basename($_FILES["installer_file"]["name"])) . " has been uploaded. Deploying...\")</script>";
+                    echo "<script>show_info_modal(\"Deploy app\", \"" . htmlspecialchars(basename($_FILES["installer_file"]["name"])) . " has been uploaded.<br>\")</script>";
                     $install_ok = true;
                 } else {
-                    echo "<script>show_info_modal(\"Deploy app\", \"Error uploading file!\")</script>";
+                    echo "<script>show_info_modal(\"Deploy app\", \"Error uploading file!<br>\")</script>";
                 }
             } else {
-                echo "<script>show_info_modal(\"Deploy app\", \"File already exists. Deploying it anyway...\")</script>";
+                echo "<script>show_info_modal(\"Deploy app\", \"File " . htmlspecialchars(basename($_FILES["installer_file"]["name"])) . " already exists.<br>\")</script>";
                 $install_ok = true;
             }
         } else {
-            echo "<script>show_info_modal(\"Deploy app\", \"Wrong file type (." . $fileType . ")\")</script>";
+            echo "<script>show_info_modal(\"Deploy app\", \"File is not .msi installer (." . $fileType . ")<br>\")</script>";
         }
     }
 
-    //echo "<script>document.getElementById(\"info_modal_body\").innerHTML += \"" . "Enter Text Here" . "\"</script>";
-    //echo $dir; //File location
-    if($install_ok){
-        //[TODO: Deploy file]
+    if ($install_ok) {
+        require '..\config.php';
+        require 'client_info.php';
+        require 'pdo_init.php';
+        $stmt = $pdo->prepare("SELECT `client_id`,`name` FROM `clients`");
+        $stmt->execute();
+        foreach ($stmt as $row) {
+            //https://4sysops.com/archives/using-powershell-to-deploy-software/
+            //Copy file to TEMP
+            echo shell_exec('powershell -command "Copy-Item -Path "' . $dir . '" -Destination "\\\\' . $row['name'] . '\c$\Windows\Temp" -Force -Recurse" 2>&1');
+            //Install (Not Working! idk why...)
+            $install_command = 'powershell -command "Invoke-Command -ComputerName "' . $row['name'] . '" -ScriptBlock { msiexec /i "\c$\Windows\Temp\\' . htmlspecialchars(basename($_FILES["installer_file"]["name"])) . ' /qn"}" 2>&1';
+            echo shell_exec($install_command);
+            ////Remove file from TEMP
+            //echo shell_exec('powershell -command "Remove-Item -Path "\\\\'.$row['name'].'\c$\Windows\Temp\\' . htmlspecialchars(basename($_FILES["installer_file"]["name"])) . '" -Force -Recurse" 2>&1');
+            ////Update app DB
+            //getApps($row['name'],0,$row['client_id']);
+        }
+        addText("<br>Deploying done.");
     }
     ?>
 </body>

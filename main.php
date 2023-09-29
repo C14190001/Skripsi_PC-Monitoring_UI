@@ -537,14 +537,14 @@ try {
                             </div>
                             <div class="modal-body" id="dapp_modal_body">
                                 <form form target="_blank" action="ajax/deployApp_upload.php" method="post" enctype="multipart/form-data">
-                                    <p>Select installer (.msi) to deploy (Max. 500 MB):</p>
+                                    <p>Select installer (.msi) to deploy (Max. 100 MB):</p>
                                     <div class="container-fluid">
                                         <div class="row">
                                             <div class="col-9">
                                                 <input type="file" class="w-100 h-100" id="dapp_file_upload" name="installer_file" required>
                                             </div>
                                             <div class="col-3">
-                                                <button class="btn btn-success w-100 h-100" id="dapp_btn_upload" onclick="sleep(100).then(() => {document.getElementById('dapp_file_upload').value='';$('#dapp_modal').modal('hide');})" name="submit">Deploy</button>
+                                                <button class="btn btn-success w-100 h-100" id="dapp_btn_upload" name="submit">Deploy</button>
                                             </div>
                                         </div>
                                     </div>
