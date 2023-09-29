@@ -43,9 +43,13 @@
     $fileType = strtolower(pathinfo($dir, PATHINFO_EXTENSION));
     $install_ok = false;
 
-    function addText($text)
+    function addText($text, $nl = true)
     {
-        echo "<script>document.getElementById(\"info_modal_body\").innerHTML += \"" . $text . "<br>\"</script>";
+        if ($nl == true) {
+            echo "<script>document.getElementById(\"info_modal_body\").innerHTML += \"" . $text . "<br>\"</script>";
+        } else {
+            echo "<script>document.getElementById(\"info_modal_body\").innerHTML += \"" . $text . "\"</script>";
+        }
     }
 
     if (isset($_POST["submit"])) {
@@ -72,19 +76,29 @@
         require 'pdo_init.php';
         $stmt = $pdo->prepare("SELECT `client_id`,`name` FROM `clients`");
         $stmt->execute();
+        addText("<hr>", false);
         foreach ($stmt as $row) {
-            //https://4sysops.com/archives/using-powershell-to-deploy-software/
-            //Copy file to TEMP
-            echo shell_exec('powershell -command "Copy-Item -Path "' . $dir . '" -Destination "\\\\' . $row['name'] . '\c$\Windows\Temp" -Force -Recurse" 2>&1');
-            //Install (Not Working! idk why...)
-            $install_command = 'powershell -command "Invoke-Command -ComputerName "' . $row['name'] . '" -ScriptBlock { msiexec /i "\c$\Windows\Temp\\' . htmlspecialchars(basename($_FILES["installer_file"]["name"])) . ' /qn"}" 2>&1';
-            echo shell_exec($install_command);
-            ////Remove file from TEMP
-            //echo shell_exec('powershell -command "Remove-Item -Path "\\\\'.$row['name'].'\c$\Windows\Temp\\' . htmlspecialchars(basename($_FILES["installer_file"]["name"])) . '" -Force -Recurse" 2>&1');
-            ////Update app DB
-            //getApps($row['name'],0,$row['client_id']);
+            if (getConnection($row['name']) == 0) {
+                //https://4sysops.com/archives/using-powershell-to-deploy-software/
+                //Copy file to TEMP
+                shell_exec('powershell -command "Copy-Item -Path "' . $dir . '" -Destination "\\\\' . $row['name'] . '\c$\Windows\Temp" -Force -Recurse" 2>&1');
+                
+                //Install (Not Working! idk why...)
+                $app_name = (string) htmlspecialchars(basename($_FILES["installer_file"]["name"]));
+                $install_command = 'powershell -command "Invoke-Command -ComputerName "' . $row['name'] . '" -ScriptBlock { msiexec /i "C:\Windows\Temp\\' . $app_name . '" /qn}" 2>&1';
+                //echo "Install command: " . $install_command . "<br>"; //DEBUG
+                shell_exec($install_command);
+                
+                ////Remove file from TEMP
+                //echo shell_exec('powershell -command "Remove-Item -Path "\\\\'.$row['name'].'\c$\Windows\Temp\\' . $app_name . '" -Force -Recurse" 2>&1');
+                
+                ////Update app DB
+                //getApps($row['name'],0,$row['client_id']);
+                addText($row['name'] . ": Deploy done.");
+            } else {
+                addText($row['name'] . ": Disconnected.");
+            }
         }
-        addText("<br>Deploying done.");
     }
     ?>
 </body>
