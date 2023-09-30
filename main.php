@@ -537,7 +537,7 @@ try {
                             </div>
                             <div class="modal-body" id="dapp_modal_body">
                                 <form form target="_blank" action="ajax/deployApp_upload.php" method="post" enctype="multipart/form-data">
-                                    <p>Select installer (.msi) to deploy (Max. 100 MB):<br><b>Important: </b>Client must already logged in.</p>
+                                    <p>Select installer (.msi) to deploy (Max. 100 MB):<br><b>Important: </b>May take a very long time.</p>
                                     <div class="container-fluid">
                                         <div class="row">
                                             <div class="col-9">

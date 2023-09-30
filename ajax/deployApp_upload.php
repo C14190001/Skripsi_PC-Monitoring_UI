@@ -83,11 +83,10 @@
                 //Copy file to TEMP
                 shell_exec('powershell -command "Copy-Item -Path "' . $dir . '" -Destination "\\\\' . $row['name'] . '\c$\Windows\Temp" -Force -Recurse" 2>&1');
 
-                //Install (Menggunakan PsExec)
-                //Info: hanya bekerja jika Client sudah login.
+                //Install
                 $app_name = (string) htmlspecialchars(basename($_FILES["installer_file"]["name"]));
-                $install_c = 'msiexec /i "C:\Windows\Temp\\' . $app_name . '" /qn';
-                $install_c2 = "..\\ps_tools\\PsExec.exe -i \\\\" . $row['name'] . " " . $install_c . " 2>&1";
+                $install_c = 'msiexec /i "C:\Windows\Temp\\' . $app_name . '" /quiet';
+                $install_c2 = "winrs -r:" . $row['name'] . " " . $install_c . " 2>&1";
                 shell_exec($install_c2);
 
                 ////Remove file from TEMP
