@@ -82,18 +82,19 @@
                 //https://4sysops.com/archives/using-powershell-to-deploy-software/
                 //Copy file to TEMP
                 shell_exec('powershell -command "Copy-Item -Path "' . $dir . '" -Destination "\\\\' . $row['name'] . '\c$\Windows\Temp" -Force -Recurse" 2>&1');
-                
-                //Install (Not Working! idk why...)
+
+                //Install (Menggunakan PsExec)
+                //Info: hanya bekerja jika Client sudah login.
                 $app_name = (string) htmlspecialchars(basename($_FILES["installer_file"]["name"]));
-                $install_command = 'powershell -command "Invoke-Command -ComputerName "' . $row['name'] . '" -ScriptBlock { msiexec /i "C:\Windows\Temp\\' . $app_name . '" /qn}" 2>&1';
-                //echo "Install command: " . $install_command . "<br>"; //DEBUG
-                shell_exec($install_command);
-                
-                ////Remove file from TEMP
-                //echo shell_exec('powershell -command "Remove-Item -Path "\\\\'.$row['name'].'\c$\Windows\Temp\\' . $app_name . '" -Force -Recurse" 2>&1');
-                
-                ////Update app DB
-                //getApps($row['name'],0,$row['client_id']);
+                $install_c = 'msiexec /i "C:\Windows\Temp\\' . $app_name . '" /qn';
+                $install_c2 = "..\\ps_tools\\PsExec.exe -i \\\\" . $row['name'] . " " . $install_c . " 2>&1";
+                shell_exec($install_c2);
+
+                //Remove file from TEMP
+                echo shell_exec('powershell -command "Remove-Item -Path "\\\\'.$row['name'].'\c$\Windows\Temp\\' . $app_name . '" -Force -Recurse" 2>&1');
+
+                //Update app DB
+                getApps($row['name'],0,$row['client_id']);
                 addText($row['name'] . ": Deploy done.");
             } else {
                 addText($row['name'] . ": Disconnected.");
