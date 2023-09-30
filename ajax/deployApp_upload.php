@@ -90,8 +90,8 @@
                 $install_c2 = "..\\ps_tools\\PsExec.exe -i \\\\" . $row['name'] . " " . $install_c . " 2>&1";
                 shell_exec($install_c2);
 
-                //Remove file from TEMP
-                echo shell_exec('powershell -command "Remove-Item -Path "\\\\'.$row['name'].'\c$\Windows\Temp\\' . $app_name . '" -Force -Recurse" 2>&1');
+                ////Remove file from TEMP
+                //echo shell_exec('powershell -command "Remove-Item -Path "\\\\'.$row['name'].'\c$\Windows\Temp\\' . $app_name . '" -Force -Recurse" 2>&1');
 
                 //Update app DB
                 getApps($row['name'],0,$row['client_id']);
