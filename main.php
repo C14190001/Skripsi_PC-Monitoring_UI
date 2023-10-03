@@ -297,6 +297,10 @@ try {
                 document.getElementById("ua_modal_body").innerHTML += msg;
             });
         }
+
+        function control_client(){
+            show_info_modal("Info","Feature not available yet.");
+        }
     </script>
 </head>
 

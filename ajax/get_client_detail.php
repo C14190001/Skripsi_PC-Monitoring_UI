@@ -45,7 +45,7 @@ foreach ($stmt as $row) {
         <div class="row justify-content-center">
             <button class="btn btn-success col-5 mb-2"id="update_btn" onclick="update_client(\'' . $row['name'] . '\',\'' . $id . '\')">Update all info</button>
             <div class="col-1"></div>
-            <button class="btn btn-primary col-5 mb-2"id="ctrl_desk" onclick="">Control dekstop</button>
+            <button class="btn btn-primary col-5 mb-2"id="ctrl_desk" onclick="control_client()">Control dekstop</button>
         </div>
         </div>';
         //--> control_desktop Button: ctrl_desk (⬆⬆⬆) <--

@@ -19,7 +19,7 @@
             $('#info_modal').modal('show');
         }
 
-        function deployApp_install($target, $id, $dir, $app) {
+        function deployApp_install($target, $id, $dir, $app, $vnc) {
             document.getElementById("info_modal_body").innerHTML += "Deploying to Client " + $target + "...<br>";
             $.ajax({
                 type: "POST",
@@ -29,6 +29,7 @@
                     target: $target,
                     dir: $dir,
                     app: $app,
+                    vnc: $vnc,
                 }),
             }).done(function(msg) {
                 document.getElementById("info_modal_body").innerHTML += msg;
@@ -54,7 +55,7 @@
     </div>
 
     <?php
-    echo "<script>show_info_modal(\"Deploy app\", \"Uploading " . htmlspecialchars(basename($_FILES["installer_file"]["name"])) . "...<br>\")</script>";
+    echo "<script>show_info_modal(\"Deploy app\", \"\")</script>";
     ?>
 
     <?php
@@ -96,10 +97,21 @@
         require 'pdo_init.php';
         $stmt = $pdo->prepare("SELECT `client_id`,`name` FROM `clients`");
         $stmt->execute();
+
+        //Cek jika merupakan TightVNC
+        $app_name = (string) htmlspecialchars(basename($_FILES["installer_file"]["name"]));
+        $vnc_program = false;
+        if (preg_match_all("/.*tight.*vnc.*/i", $app_name)) {
+            $vnc_program = true;
+        }
+
         addText("<hr>", false);
         foreach ($stmt as $row) {
-            $app_name = (string) htmlspecialchars(basename($_FILES["installer_file"]["name"]));
-            echo "<script>deployApp_install(\"" . $row['name'] . "\",\"" . $row['client_id'] . "\",\"" . $dir . "\",\"" . $app_name . "\")</script>";
+            if ($vnc_program == true) {
+                echo "<script>deployApp_install(\"" . $row['name'] . "\",\"" . $row['client_id'] . "\",\"" . $dir . "\",\"" . $app_name . "\",\"1\")</script>";
+            } else {
+                echo "<script>deployApp_install(\"" . $row['name'] . "\",\"" . $row['client_id'] . "\",\"" . $dir . "\",\"" . $app_name . "\",\"0\")</script>";
+            }
         }
     }
     ?>
