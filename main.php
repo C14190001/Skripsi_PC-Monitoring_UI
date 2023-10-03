@@ -77,14 +77,11 @@ try {
                     sleep(2000).then(() => {
                         document.getElementById("restart_btn").innerHTML = "Restart";
                     });
-                    //$a = $client + "'s restart results";
                 } else {
                     sleep(2000).then(() => {
                         document.getElementById("shutdown_btn").innerHTML = "Shutdown";
                     });
-                    //$a = $client + "'s shutdown results";
                 }
-                //show_info_modal($a, msg);
             });
         }
 
@@ -194,23 +191,6 @@ try {
             });
         }
 
-        // function scan_devices_ad() {
-        //     if (document.getElementById("sd_dn_input").value == "") {
-        //         alert("Please enter Distinguished Name");
-        //     } else {
-        //         document.getElementById("sd_results").innerHTML = "Searching for Computers...";
-        //         $.ajax({
-        //             type: "POST",
-        //             url: "ajax/scan_devices_ad.php",
-        //             data: ({
-        //                 dn_search: document.getElementById("sd_dn_input").value,
-        //             }),
-        //         }).done(function(msg) {
-        //             document.getElementById("sd_results").innerHTML = msg;
-        //         });
-        //     }
-        // }
-
         function download_csv() {
             if (document.getElementById('radio_download_only').checked) {
                 location.href = 'ajax/download_csv.php';
@@ -219,33 +199,6 @@ try {
                 update_all_client(0, 1);
             }
         }
-
-        // function update_all_client(is_button, download_csv) {
-        //     //is_button = 1, jika berasal dari tombol 'Update all client'.
-        //     if (is_button == 1) {
-        //         document.getElementById("btn_update_all").innerHTML = "Updating...";
-        //     }
-        //     //download_csv = 1, jika berasal dari tombol modal Download .csv
-        //     if (download_csv == 1) {
-        //         document.getElementById("btn_download_csv").innerHTML = "Updating...";
-        //     }
-        //     $.ajax({
-        //         type: "POST",
-        //         url: "ajax/update_all_info.php",
-        //         data: ({}),
-        //     }).done(function(msg) {
-        //         if (is_button == 1) {
-        //             document.getElementById("btn_update_all").innerHTML = "Update all clients";
-        //         }
-        //         if (download_csv == 1) {
-        //             location.href = 'ajax/download_csv.php';
-        //             document.getElementById("btn_download_csv").innerHTML = "Download";
-        //             $('#dcsv_modal').modal('hide');
-        //         }
-        //         //Refresh halaman
-        //         refresh_clients_list();
-        //     });
-        // }
 
         function delete_client(client_id) {
             document.getElementById("dc_delete_btn").innerHTML = "Removing...";
@@ -360,10 +313,8 @@ try {
             <div class="navbar-nav ml-auto">
                 <!--Right menu button-->
                 <button class="btn btn-primary mr-2 mt-1" onclick="$('#sd_modal').modal({backdrop: 'static',keyboard: false});$('#sd_modal').modal('show');">Scan devices</button>
-                <!-- <button class="btn btn-primary mr-2 mt-1" onclick="update_all_client(1,0)" id="btn_update_all">Update all clients</button> -->
                 <button class="btn btn-primary mr-2 mt-1" onclick="updateAll_find()" id="btn_update_all">Update all clients</button>
                 <button class="btn btn-primary mr-2 mt-1" onclick="$('#dapp_modal').modal({backdrop: 'static',keyboard: false});$('#dapp_modal').modal('show');">Deploy app</button>
-                <!-- <button class="btn btn-success mr-2 mt-1" onclick="$('#dcsv_modal').modal({backdrop: 'static',keyboard: false});$('#dcsv_modal').modal('show');">Download .csv</button> -->
                 <button class="btn btn-success mr-2 mt-1" onclick="download_csv();">Download .csv</button>
             </div>
         </div>
@@ -419,37 +370,6 @@ try {
                 ?>
             </div>
             <div class="col-9" style="text-align: justify; height: 90vh; overflow-y: scroll;">
-                <!--(Tidak dipakai) Modal Download .csv-->
-                <div class="modal fade" id="dcsv_modal">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Download .csv</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="container-fluid">
-                                    <h6>Options:</h6>
-                                    <!-- Radio button: Download only + Update then download !-->
-                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                        <label class="btn btn-outline-secondary active">
-                                            <input type="radio" name="dl_csv_op" id="radio_download_only" checked> Download only
-                                        </label>
-                                        <label class="btn btn-outline-secondary">
-                                            <input type="radio" name="dl_csv_op" id="radio_update_download"> Update + Download
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" id="btn_download_csv" onclick="download_csv()">Download</button>
-                                <!-- Onclick: Matikan radio button -->
-                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
                 <!--Modal Scan Devices-->
                 <div class="modal fade" id="sd_modal">
                     <div class="modal-dialog modal-dialog-centered">

@@ -18,6 +18,22 @@
             });
             $('#info_modal').modal('show');
         }
+
+        function deployApp_install($target, $id, $dir, $app) {
+            document.getElementById("info_modal_body").innerHTML += "Deploying to Client " + $target + "...<br>";
+            $.ajax({
+                type: "POST",
+                url: "deployApp_install.php",
+                data: ({
+                    id: $id,
+                    target: $target,
+                    dir: $dir,
+                    app: $app,
+                }),
+            }).done(function(msg) {
+                document.getElementById("info_modal_body").innerHTML += msg;
+            });
+        }
     </script>
 </head>
 
@@ -38,6 +54,10 @@
     </div>
 
     <?php
+    echo "<script>show_info_modal(\"Deploy app\", \"Uploading " . htmlspecialchars(basename($_FILES["installer_file"]["name"])) . "...<br>\")</script>";
+    ?>
+
+    <?php
     //https://www.w3schools.com/php/php_file_upload.asp
     $dir = "../deploy_app/" . basename($_FILES["installer_file"]["name"]);
     $fileType = strtolower(pathinfo($dir, PATHINFO_EXTENSION));
@@ -56,17 +76,17 @@
         if ($fileType == "msi") {
             if (!file_exists($dir)) {
                 if (move_uploaded_file($_FILES["installer_file"]["tmp_name"], $dir)) {
-                    echo "<script>show_info_modal(\"Deploy app\", \"" . htmlspecialchars(basename($_FILES["installer_file"]["name"])) . " has been uploaded.<br>\")</script>";
+                    addText(htmlspecialchars(basename($_FILES["installer_file"]["name"])) . " has been uploaded.");
                     $install_ok = true;
                 } else {
-                    echo "<script>show_info_modal(\"Deploy app\", \"Error uploading file!<br>\")</script>";
+                    addText("Error uploading file!");
                 }
             } else {
-                echo "<script>show_info_modal(\"Deploy app\", \"File " . htmlspecialchars(basename($_FILES["installer_file"]["name"])) . " already exists.<br>\")</script>";
+                addText("File " . htmlspecialchars(basename($_FILES["installer_file"]["name"])) . " already exists.");
                 $install_ok = true;
             }
         } else {
-            echo "<script>show_info_modal(\"Deploy app\", \"File is not .msi installer (." . $fileType . ")<br>\")</script>";
+            addText("File is not .msi installer (." . $fileType . ")");
         }
     }
 
@@ -78,26 +98,8 @@
         $stmt->execute();
         addText("<hr>", false);
         foreach ($stmt as $row) {
-            if (getConnection($row['name']) == 0) {
-                //https://4sysops.com/archives/using-powershell-to-deploy-software/
-                //Copy file to TEMP
-                shell_exec('powershell -command "Copy-Item -Path "' . $dir . '" -Destination "\\\\' . $row['name'] . '\c$\Windows\Temp" -Force -Recurse" 2>&1');
-
-                //Install
-                $app_name = (string) htmlspecialchars(basename($_FILES["installer_file"]["name"]));
-                $install_c = 'msiexec /i "C:\Windows\Temp\\' . $app_name . '" /quiet';
-                $install_c2 = "winrs -r:" . $row['name'] . " " . $install_c . " 2>&1";
-                shell_exec($install_c2);
-
-                ////Remove file from TEMP
-                //echo shell_exec('powershell -command "Remove-Item -Path "\\\\'.$row['name'].'\c$\Windows\Temp\\' . $app_name . '" -Force -Recurse" 2>&1');
-
-                //Update app DB
-                getApps($row['name'],0,$row['client_id']);
-                addText($row['name'] . ": Deploy done.");
-            } else {
-                addText($row['name'] . ": Disconnected.");
-            }
+            $app_name = (string) htmlspecialchars(basename($_FILES["installer_file"]["name"]));
+            echo "<script>deployApp_install(\"" . $row['name'] . "\",\"" . $row['client_id'] . "\",\"" . $dir . "\",\"" . $app_name . "\")</script>";
         }
     }
     ?>
