@@ -299,7 +299,9 @@ try {
         }
 
         function control_client(){
-            show_info_modal("Info","Feature not available yet.");
+            var instruction = "How to connect:<br>1. Click 'Open TightVNC Viewer'.<br>2. Enter Client's IP address on Remote host.<br>3. Click Connect button.<br>4. Enter password and click OK.<br>";
+            show_info_modal("Control desktop",instruction);
+            window.location.href='RunTightVNCViewer://';
         }
     </script>
 </head>
