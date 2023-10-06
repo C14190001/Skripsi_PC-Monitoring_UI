@@ -434,7 +434,7 @@ try {
                             </div>
                             <div class="modal-body" id="ua_modal_body"></div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-danger" onclick="refresh_clients_list()" data-dismiss="modal">Close</button>
                             </div>
 
                         </div>
@@ -477,7 +477,7 @@ try {
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" onclick="document.getElementById('dapp_file_upload').value='';$('#dapp_modal').modal('hide');" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-danger" onclick="document.getElementById('dapp_file_upload').value='';$('#dapp_modal').modal('hide');refresh_clients_list()" data-dismiss="modal">Close</button>
                             </div>
 
                         </div>
