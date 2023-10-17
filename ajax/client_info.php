@@ -153,11 +153,11 @@ function getHdd($target, $conn = 0, $id = -1, $usage = 0)
 {
     require 'pdo_init.php';
     if ($conn == 0) {
-        $hdd_cap = round(str_replace("Size : ", "", shell_exec('powershell -command "Get-CimInstance -ClassName Win32_LogicalDisk  -ComputerName ' . $target . ' | Format-List Size"' . " 2>&1")) / 1073741824, 2);
+        $hdd_cap = round((int)str_replace("Size : ", "", shell_exec('powershell -command "Get-CimInstance -ClassName Win32_LogicalDisk  -ComputerName ' . $target . ' | Format-List Size"' . " 2>&1")) / 1073741824, 2);
         $hdd_usage = 0;
         $hdd_usage_per = 0;
         if ($usage == 1) {
-            $hdd_free = round(str_replace(array("FreeSpace : "), array(""), shell_exec('powershell -command "Get-CimInstance -ClassName Win32_LogicalDisk  -ComputerName ' . $target . ' | Format-List FreeSpace"' . " 2>&1")) / 1073741824, 2);
+            $hdd_free = round((int)str_replace(array("FreeSpace : "), array(""), shell_exec('powershell -command "Get-CimInstance -ClassName Win32_LogicalDisk  -ComputerName ' . $target . ' | Format-List FreeSpace"' . " 2>&1")) / 1073741824, 2);
             $hdd_usage = $hdd_cap - $hdd_free;
             $hdd_usage_per = round(($hdd_usage / $hdd_cap) * 100, 2);
         }

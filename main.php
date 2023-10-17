@@ -192,12 +192,13 @@ try {
         }
 
         function download_csv() {
-            if (document.getElementById('radio_download_only').checked) {
-                location.href = 'ajax/download_csv.php';
-                $('#dcsv_modal').modal('hide');
-            } else if (document.getElementById('radio_update_download').checked) {
-                update_all_client(0, 1);
-            }
+            location.href = 'ajax/download_csv.php';
+            // if (document.getElementById('radio_download_only').checked) {
+            //     location.href = 'ajax/download_csv.php';
+            //     $('#dcsv_modal').modal('hide');
+            // } else if (document.getElementById('radio_update_download').checked) {
+            //     update_all_client(0, 1);
+            // }
         }
 
         function delete_client(client_id) {
