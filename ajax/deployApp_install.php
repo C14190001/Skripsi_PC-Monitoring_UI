@@ -24,10 +24,7 @@ if (getConnection($target) == 0) {
     }
     $install_c2 = "winrs -r:" . $target . " \"" . $install_c . "\" 2>&1";
     shell_exec($install_c2);
-
-    ////Remove file from TEMP
-    //echo shell_exec('powershell -command "Remove-Item -Path "\\\\'.$target.'\c$\Windows\Temp\\' . $app_name . '" -Force -Recurse" 2>&1');
-
+    
     //Update app DB
     getApps($target, 0, $id);
     echo "<span style=\"color:green;\">Deployed to Client " . $target . ".</span><br>";

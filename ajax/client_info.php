@@ -403,7 +403,4 @@ switch ($info) {
             echo "<span style=\"color:red;font-size: 24px;display: flex; justify-content: center;\">⦿</span>";
         }
         break;
-    case "Nothing":
-        echo "(Unknown function)";
-        break;
 }

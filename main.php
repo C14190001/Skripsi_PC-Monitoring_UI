@@ -137,7 +137,6 @@ try {
         }
 
         function refresh_clients_list() {
-            //Refresh daftar client dengan F5 (sementara)
             window.location.reload();
         }
 
@@ -391,7 +390,6 @@ try {
                                             <input id="sd_dn_input" class="w-100 h-100" type="text" placeholder="Distinguished Name">
                                         </div>
                                         <div class="col-3">
-                                            <!-- <button class="btn btn-primary w-100 h-100" id="sd_dn_search" onclick="scan_devices_ad()">Search</button> -->
                                             <button class="btn btn-primary w-100 h-100" id="sd_dn_search" onclick="add_devices_scan()">Search</button>
                                         </div>
                                     </div>
@@ -402,8 +400,7 @@ try {
                                 </div>
                             </div>
                             <div class="modal-footer" id="sd_modal_footer">
-                                <!-- <button type="button" class="btn btn-danger" onclick="document.getElementById('sd_dn_input').value=''; document.getElementById('sd_results').innerHTML='';" data-dismiss="modal">Close</button> -->
-                                <button type="button" class="btn btn-danger" onclick="document.getElementById('sd_dn_input').value=''; document.getElementById('sd_results').innerHTML=''; refresh_clients_list()" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-danger" onclick="refresh_clients_list()" data-dismiss="modal">Close</button>
                             </div>
 
                         </div>

@@ -14,12 +14,10 @@ $stmt->execute();
 $delimiter = ",";
 $filename = "clients_" . date('Y-m-d H:i:s') . ".csv";
 $f = fopen('php://memory', 'w');
-//$fields = array('client_id', 'name', 'os', 'cpu', 'i_gpu', 'e_gpu', 'ram', 'mem', 'ip', 'mac', 'app', 'cpu_usage', 'ram_usage', 'mem_usage', 'last_bootup', 'connection_status');
 $fields = array('client_id', 'name', 'os', 'cpu', 'i_gpu', 'e_gpu', 'ram', 'mem', 'ip', 'mac', 'app');
 fputcsv($f, $fields, $delimiter);
 
 foreach ($stmt as $row) {
-    //$lineData = array($row['client_id'], $row['name'], $row['os'], $row['cpu'], $row['i_gpu'], $row['e_gpu'], $row['ram'], $row['mem'], $row['ip'], $row['mac'], $row['app'], $row['cpu_usage'], $row['ram_usage'], $row['mem_usage'], $row['last_bootup'], $row['connection_status']);
     $lineData = array($row['client_id'], $row['name'], $row['os'], $row['cpu'], $row['i_gpu'], $row['e_gpu'], $row['ram'], $row['mem'], $row['ip'], $row['mac'], $row['app']);
     fputcsv($f, $lineData, $delimiter);
 }
