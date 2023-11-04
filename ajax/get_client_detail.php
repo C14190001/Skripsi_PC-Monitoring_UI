@@ -10,6 +10,7 @@ $stmt->execute();
 foreach ($stmt as $row) {
     echo '<button class="btn btn-outline-danger mt-2" style="float: right" onclick="delete_client_modal(\'' . $id . '\', \'' . $row['name'] . '\')"><img src="icons\trash.svg"> Remove</button>';
     echo '<h1>' . $row['name'] . '</h1>';
+    
     //Status (Selalu diupdate)
     //Cek koneksi
     $conn_status = getConnection($row['name'], $id);
@@ -48,7 +49,6 @@ foreach ($stmt as $row) {
             <button class="btn btn-primary col-5 mb-2"id="ctrl_desk" onclick="control_client()">Control dekstop</button>
         </div>
         </div>';
-        //--> control_desktop Button: ctrl_desk (⬆⬆⬆) <--
     }
 
     echo "<hr>";

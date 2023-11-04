@@ -26,7 +26,7 @@ foreach ($stmt as $row) {
         $hddUsage = getHdd($target, $result, $id, 1);
         echo "Memory Usage: " . $hddUsage[1] . " GB (" . $hddUsage[2] . "%)<br>";
         $uptime = getUptime($target, $result, $id, 2);
-        echo "Uptime: ",  $uptime[0], " Days ", $uptime[1], " Hours ", $uptime[2], " Minutes ", $uptime[3], " Seconds";
+        echo "Uptime: ",  $uptime[0], " Days, ", $uptime[1], " Hours, ", $uptime[2], " Minutes, ", $uptime[3], " Seconds";
     } else {
         //Disconnected
         $stmt2 = $pdo->prepare("UPDATE `clients_status` SET `cpu_usage` = ? WHERE `client_id` = ?");
