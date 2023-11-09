@@ -59,7 +59,6 @@
     ?>
 
     <?php
-    //https://www.w3schools.com/php/php_file_upload.asp
     $dir = "../deploy_app/" . basename($_FILES["installer_file"]["name"]);
     $fileType = strtolower(pathinfo($dir, PATHINFO_EXTENSION));
     $install_ok = false;

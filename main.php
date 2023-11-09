@@ -18,13 +18,11 @@ try {
 <head>
     <title>Monitoring UI</title>
     <script src="jquery.min.js"></script>
-    <!--Bootstrap 4.6-->
-    <!-- https://www.w3schools.com/bootstrap4/default.asp -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
     <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
-    <!----------------->
+
     <script>
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
@@ -176,17 +174,6 @@ try {
             get_client_status($id);
             sleep(2000).then(() => {
                 document.getElementById("update_btn").innerHTML = "Update all info";
-            });
-        }
-
-        function get_client_list() {
-            document.getElementById("client_list").innerHTML = "Loading...";
-            $.ajax({
-                type: "POST",
-                url: "ajax/get_client_list.php",
-                data: ({}),
-            }).done(function(msg) {
-                document.getElementById("client_list").innerHTML = msg;
             });
         }
 
@@ -396,7 +383,6 @@ try {
                             <div class="modal-footer" id="sd_modal_footer">
                                 <button type="button" class="btn btn-danger" onclick="refresh_clients_list()" data-dismiss="modal">Close</button>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -412,7 +398,6 @@ try {
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -428,7 +413,6 @@ try {
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" onclick="refresh_clients_list()" data-dismiss="modal">Close</button>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -471,7 +455,6 @@ try {
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" onclick="document.getElementById('dapp_file_upload').value='';$('#dapp_modal').modal('hide');refresh_clients_list()" data-dismiss="modal">Close</button>
                             </div>
-
                         </div>
                     </div>
                 </div>

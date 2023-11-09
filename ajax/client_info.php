@@ -189,10 +189,11 @@ function getIpMac($target, $conn = 0, $id = -1, $output = 0)
     if ($conn == 0) {
         //IP Address
         $exec = shell_exec('powershell -command "Get-CimInstance -ClassName Win32_NetworkAdapterConfiguration -ComputerName ' . $target . ' | where {$_.MACAddress -ne $null } | Format-List IPAddress"' . " 2>&1");
-        $exec = preg_replace('/\s+/', '', $exec); //Hapus Whitespace
-        $exec = str_replace(array('{', '}'), '', $exec); //Hapus karakter '{' dan '}' (hanya untuk IP Address)
-        $ip_arr = explode('IPAddress:', $exec); //Ubah jadi Array
-        array_splice($ip_arr, 0, 1); //Buang index ke-0 (selalu kosong entah kenapa...)
+        $exec = preg_replace('/\s+/', '', $exec);           //Hapus Whitespace
+        $exec = str_replace(array('{', '}'), '', $exec);    //Hapus karakter '{' dan '}' (hanya untuk IP Address)
+        $ip_arr = explode('IPAddress:', $exec);             //Ubah jadi Array
+        array_splice($ip_arr, 0, 1);                        //Buang index ke-0 (selalu kosong entah kenapa...)
+        
         //Yang kosong akan diubah ke N/A (Jangan dibuang, karena jumlah IP = jumlah MAC)
         for ($i = 0; $i < count($ip_arr); $i++) {
             if (empty($ip_arr[$i])) {

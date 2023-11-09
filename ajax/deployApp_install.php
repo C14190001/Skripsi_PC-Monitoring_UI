@@ -10,7 +10,6 @@ $app_name = $_POST['app'];
 $vnc_app = $_POST['vnc']; //1 True or 0 False
 
 if (getConnection($target) == 0) {
-    //https://4sysops.com/archives/using-powershell-to-deploy-software/
     //Copy file to TEMP
     shell_exec('powershell -command "Copy-Item -Path "' . $dir . '" -Destination "\\\\' . $target . '\c$\Windows\Temp" -Force -Recurse" 2>&1');
 
