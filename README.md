@@ -1,6 +1,7 @@
 # Sistem Monitoring Status Komputer
 
 Memerlukan XAMPP (Apache untuk menjalankan dan MySQL sebagai _database_ Sistem Monitoring Status Komputer) dengan ijin _Administrator Domain Controller_.
+XAMPP harus sudah diatur sesuai intruksi yang ada.
 Untuk Database, lakukan _import_ file _monitoring_db.sql_.
 
 Untuk dapat Kontrol Dekstop, maka _TightVNC_ perlu di-install di Domain Controller dan komputer yang akan dipantau:
